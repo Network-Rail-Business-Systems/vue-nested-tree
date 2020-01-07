@@ -1,0 +1,29 @@
+{
+    "name": "vue-nested-tree",
+    "version": "0.0.0",
+    "description": "A hierarchical tree navigator for sets of data",
+    "main": "vue-nested-tree.js",
+    "dependencies": {
+        "vue": "^2.6.11"
+    },
+    "devDependencies": {},
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+ssh://git@bitbucket.org/nrbusinesssystems/vue-nested-tree.git"
+    },
+    "keywords": [
+        "vuejs",
+        "tree",
+        "hierarchy",
+        "nested",
+        "set",
+        "table",
+        "data"
+    ],
+    "author": "Anthony Edmonds",
+    "license": "CC-BY-4.0",
+    "homepage": "https://bitbucket.org/nrbusinesssystems/vue-nested-tree#readme"
+}
