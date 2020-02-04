@@ -1,25 +1,41 @@
 # vue-nested-tree
 
-## Project setup
-```
-npm install
-```
+## About
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+### Installation
 
-### Compiles and minifies for production
-```
-npm run build
-```
+To use the nested tree interface include `NestedTree.vue` in your JavaScript and `nested-tree.scss` in your styles.
+
+### Dependencies
+
+This interface makes use of the following external dependencies:
+
+* Bulma `0.8.0`
+* Font Awesome Core `1.2.26`
+* Fort Awesome Free `5.12.0`
+* Vue `2.6.10`
+* Vue Font-Awesome `0.1.9`
 
 ## Components
+
+This interface includes four components, which are detailed below:
+
+* Nested Tree
+* Tree Row
+* Tree Line
+* Toggle Button
+
+In normal use the only component you will need to include and access directly is Nested Tree.
 
 ### Nested Tree
 
 #### Usage
+
+Place a `<nested-tree>` tag on your page along with the required props to use the component.
+
+This component has a `<table>` element at its base, wrapped in a Bulma `table-container` to handle overflow.
+
+It is recommended to place the Nested Tree with minimal content to the left or right, as nested data can become quite wide when fully expanded.
 
 #### Props
 
