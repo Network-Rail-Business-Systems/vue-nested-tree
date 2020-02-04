@@ -1,0 +1,17 @@
+@import './components/ToggleButton/toggle-button.scss';
+@import './components/TreeLine/tree-line.scss';
+@import './components/TreeRow/tree-row.scss';
+
+table.nested-tree {
+    & td {
+        vertical-align: middle;
+
+        &.has-tree-button {
+            border-bottom-style: none;
+        }
+    }
+    
+    & .is-interactive {
+        cursor: pointer;
+    }
+}

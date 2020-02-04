@@ -1,8 +1,12 @@
-import Vue from 'vue'
-import App from './App.vue'
+import Vue from 'vue';
+import NestedTree from './NestedTree.vue';
 
-Vue.config.productionTip = false
+import {library} from "@fortawesome/fontawesome-svg-core";
+import {fas} from "@fortawesome/free-solid-svg-icons";
 
-new Vue({
-  render: h => h(App),
-}).$mount('#app')
+library.add(fas);
+
+Vue.component("nested-tree", NestedTree);
+Vue.config.productionTip = false;
+
+new Vue().$mount('#app');
