@@ -37,12 +37,18 @@ This component has a `<table>` element at its base, wrapped in a Bulma `table-co
 
 It is recommended to place the Nested Tree with minimal content to the left or right, as nested data can become quite wide when fully expanded.
 
+#### Slots
+
+| Name         | Wrapper        | Location                              |
+| ------------ | -------------- | ------------------------------------- |
+| header-left  | div.level-item | Top left, above table                 |
+| header-right | div.level-item | Top right, above table, after toggles |
+
 #### Props
 
 | Name              | Type    | Required | Default | Sync | Validation      |
 | ----------------- | ------- | -------- | ------- | ---- | --------------- |
 | columns           | Array   | Yes      |         | No   | objectsHaveKeys |
-| download_url      | String  | No       | false   | No   |                 |
 | percentage_of     | String  | No       | null    | No   |                 |
 | start_group       | Boolean | No       | false   | No   |                 |
 | start_percented   | Boolean | No       | false   | No   |                 |
@@ -75,16 +81,6 @@ An array of objects is used to display fields held within the `data` prop while 
 | icon    | String  | Yes      |         | The font-awesome icon to display in the header                |
 | field   | String  | No       | *name*  | The matching `data` field; equal to lowercase `name` if blank |
 | percent | Boolean | No       | true    | Whether the column should be shown as a percent, if enabled   |
-
-##### download_url
-
-An endpoint where a downloadable version of the displayed tree is available.
-
-The request will include the current root node(s) to use as a reference point. 
-
-The format and structure of the returned data is determined by the response from the server.
-
-`download_url: "my-endpoint/download"`
 
 ##### groups
 

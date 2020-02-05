@@ -2,7 +2,7 @@
     <div class="table-container">
         <div class="level is-mobile">
             <div class="level-left">
-                <div class="level-item">Filter</div>
+                <div class="level-item"><slot name="header-left"></slot></div>
             </div>
             
             <div class="level-right">
@@ -22,6 +22,8 @@
                         label="Percentages"
                     ></toggle-button>
                 </div>
+                
+                <slot name="header-right"></slot>
             </div>
         </div>
         
