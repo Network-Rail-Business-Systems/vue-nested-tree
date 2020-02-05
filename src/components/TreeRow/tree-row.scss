@@ -1,0 +1,11 @@
+tr.tree-row {
+    & > td {
+        & > div {
+            &.tag {
+                & > svg {
+                    margin-right: 0.5em;
+                }
+            }
+        }
+    }
+}

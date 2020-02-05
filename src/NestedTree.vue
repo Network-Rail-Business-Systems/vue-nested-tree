@@ -48,7 +48,7 @@
                         <th
                             v-for="(group, index) in groups"
                             :key="index"
-                            class="is-narrow"
+                            class="is-narrow has-text-centered"
                         >
                             <font-awesome-icon :icon="group.icon" :title="group.name"></font-awesome-icon>
                         </th>
@@ -76,6 +76,8 @@
                     :is_grouped="is_grouped"
                     :is_percented="is_percented"
                     :subtree_is_enabled="subtree_is_enabled"
+                    :subtree_url="subtree_url"
+                    :traverse_down_url="traverse_down_url"
                 ></tree-row>
             </tbody>
         </table>
@@ -99,6 +101,7 @@
         data: function ()
         {
             return {
+                raw_tree: this.tree,
                 processed_tree: [],
                 
                 is_processing: false,
@@ -161,7 +164,7 @@
                 validator: isNotBlank()
             },
             
-            traverse_downward_url: {
+            traverse_down_url: {
                 type: String,
                 default: null,
                 validator: isNotBlank()
@@ -291,7 +294,7 @@
                     for (let index in sourceData.children) {
                         let childNode = this.processTreeData(sourceData.children[index], depth + 1);
                         childNode.parent = treeNode;
-                        treeNode.children.push(childNode);
+                        treeNode.children.contents.push(childNode);
                         
                         if (treeNode.levels < childNode.levels + 1) {
                             treeNode.levels = childNode.levels + 1;
@@ -310,28 +313,75 @@
              */
             createTreeNode: function (sourceData, depth)
             {
-                let expanded = false;
                 let groups = this.groupData(sourceData.data);
-                
-                if (depth === 0) {
-                    expanded = true;
-                }
+                let percents = this.percentData(sourceData.data, groups);
                 
                 return {
+                    raw: sourceData,
+                    parent: null,
+                    
                     id: sourceData.id,
                     details: sourceData.details,
-                    children: [],
-                    
                     values: sourceData.data,
                     groups: groups,
-                    percentages: this.percentData(sourceData.data, groups),
+                    percentages: percents,
                     
-                    expanded: expanded,
-                    parent: null,
+                    children: {
+                        available: sourceData.children === true,
+                        expanded: depth === 0,
+                        loaded: Array.isArray(sourceData.children) === true,
+                        contents: []
+                    },
+                    
+                    subtree: {
+                        available: typeof sourceData.subtree === 'undefined' || sourceData.subtree === true,
+                        expanded: false,
+                        loaded: Array.isArray(sourceData.subtree) === true,
+                        contents: this.processSubtree(sourceData.subtree)
+                    },
+                    
                     depth: depth,
                     levels: 0,
                     lines: []
                 }
+            },
+            
+            /**
+             * Creates a flat subtree with percentage and grouping information
+             * @param subtreeRows Array The raw subtree data
+             * @return Array An array of processed subtree rows
+             */
+            processSubtree: function (subtreeRows)
+            {
+                let subtree = [];
+                
+                if (subtreeRows === true || subtreeRows === false) {
+                    return subtree;
+                }
+                
+                for (let row in subtreeRows) {
+                    subtree.push(this.createSubtreeRow(subtreeRows[row]));
+                }
+                
+                return subtree;
+            },
+            /**
+             * Creates a subtree row with percent and group data
+             * @param subtreeRow Object The raw subtree row data
+             * @return Object The processed subtree row
+             */
+            createSubtreeRow: function (subtreeRow)
+            {
+                let groups = this.groupData(subtreeRow.data);
+                let percents = this.percentData(subtreeRow.data, groups);
+                
+                return {
+                    id: subtreeRow.id,
+                        details: subtreeRow.details,
+                    values: subtreeRow.data,
+                    groups: groups,
+                    percentages: percents
+                };
             },
             
             /**
@@ -407,7 +457,8 @@
                     } else if (typeof column.percent !== 'undefined' && column.percent === false) {
                         value = data[column.field];
                     } else {
-                        value = (data[column.field] / total) * 100 + '%';
+                        value = data[column.field] / total;
+                        value = value.toFixed(2) * 100 + '%';
                     }
 
                     values[column.field] = value;
@@ -441,7 +492,7 @@
                                 break;    
 
                             default:
-                                treeNode.lines[index] = null;
+                                treeNode.lines[index] = 'none';
                         }
                     }
                     
@@ -456,9 +507,9 @@
                 
                 visibleNodes.push(treeNode);
                 
-                for (let index in treeNode.children) {
-                    let siblingAfter = parseInt(index) !== treeNode.children.length - 1;
-                    let child = this.filterVisibleNodes(treeNode.children[index], siblingAfter);
+                for (let index in treeNode.children.contents) {
+                    let siblingAfter = parseInt(index) !== treeNode.children.contents.length - 1;
+                    let child = this.filterVisibleNodes(treeNode.children.contents[index], siblingAfter);
                     if (child !== false) {
                         visibleNodes = visibleNodes.concat(child);
                     }
@@ -478,7 +529,7 @@
                     return true;
                 }
                 
-                if (treeNode.parent.expanded === true) {
+                if (treeNode.parent.children.expanded === true) {
                     return true;
                 }
                 
@@ -498,13 +549,17 @@
         
         mounted: function ()
         {
-            this.processed_tree = this.createProcessedTree(this.tree);
+            this.processed_tree = this.createProcessedTree(this.raw_tree);
         },
         
         watch: {
             tree: function ()
             {
-                this.processed_tree = this.createProcessedTree(this.tree);
+                this.raw_tree = this.tree;
+            },
+            raw_tree: function ()
+            {
+                this.processed_tree = this.createProcessedTree(this.raw_tree);
             }
         }
     }

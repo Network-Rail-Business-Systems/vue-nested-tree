@@ -1,5 +1,5 @@
 <template>
-    <td class="tree-line is-narrow">
+    <td :class="tree_line_classes">
         <div :class="horizontal_classes"></div>
         <div :class="vertical_classes"></div>
     </td>
@@ -14,7 +14,7 @@
         props: {
             direction: {
                 type: String,
-                required: true,
+                default: 'none',
                 validator: inList([
                     'cap-up',
                     'cap-down',
@@ -25,6 +25,7 @@
                     'elbow-up-right',
                     'elbow-down-left',
                     'elbow-down-right',
+                    'none',
                     'straight-horizontal',
                     'straight-vertical',
                     'tee-up',
@@ -36,7 +37,7 @@
         },
         
         computed: {
-            enabled_directions: function()
+            enabled_directions: function ()
             {
                 switch (this.direction) {
                     case "cap-up":
@@ -89,7 +90,33 @@
                 }
             },
             
-            horizontal_classes: function()
+            tree_line_classes: function ()
+            {
+                let classes = [
+                    'tree-line',
+                    'is-narrow'
+                ];
+                
+                if (this.enabled_directions.up === true) {
+                    classes.push('up');
+                }
+
+                if (this.enabled_directions.right === true) {
+                    classes.push('right');
+                }
+
+                if (this.enabled_directions.down === true) {
+                    classes.push('down');
+                }
+
+                if (this.enabled_directions.left === true) {
+                    classes.push('left');
+                }
+                
+                return classes;
+            },
+            
+            horizontal_classes: function ()
             {
                 if (this.enabled_directions.left === true && this.enabled_directions.right === true) {
                     return ["horizontal", "full-width"];
@@ -104,7 +131,7 @@
                 return [];
             },
 
-            vertical_classes: function()
+            vertical_classes: function ()
             {
                 if (this.enabled_directions.up === true && this.enabled_directions.down === true) {
                     return ["vertical", "full-height"];

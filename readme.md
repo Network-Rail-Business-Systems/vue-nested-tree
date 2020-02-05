@@ -10,6 +10,7 @@ To use the nested tree interface include `NestedTree.vue` in your JavaScript and
 
 This interface makes use of the following external dependencies:
 
+* Axios `0.19.2`
 * Bulma `0.8.0`
 * Font Awesome Core `1.2.26`
 * Fort Awesome Free `5.12.0`
@@ -134,9 +135,9 @@ Whether to initially display the tree using percentages.
 
 An endpoint where subtree data for a given ID can be loaded.
 
-The response from the server should contain a "branch" object (see the `tree` prop) with at most one level of children.
+The response from the server should contain an array of "branch" objects (see the `tree` prop). Children and Subtree items will be ignored at the subtree level, and may be excluded from the response.
 
-If left blank the subtree buttons will be hidden.
+If left blank the subtree button will be disabled for any node without a populated subtree array.
 
 ##### title
 
@@ -144,36 +145,49 @@ The overarching description for the presented tree that will be shown in the tab
 
 `title: "Family Member"`
 
-##### traverse_downward_url
+##### traverse_down_url
 
 An endpoint where data from below the current node's level can be loaded.
 
-The request will include the ID of the node to use as a reference.
+The request will include the ID of the node to use as a reference; include a placeholder `%id` in the URL string.
 
-If left blank the "expand" button will be hidden on nodes without any children.
+The response from the server should contain an array of tree objects, which may contain further children.
 
-##### traverse_upward_url
+If left blank the "expand" button will not show for nodes where `children: true` is set.
+
+`traverse_down_url: "my-endpoint/load-down/%id"`
+
+##### traverse_up_url
 
 An endpoint where data from above the current tree's level can be loaded.
+
+The request will include the ID of the node to use as a reference; include a placeholder `%id` in the URL string.
 
 The response from the server should contain an array of tree objects, where one of the immediate children matches the existing root nodes.
 
 If left blank upward traversal will be disabled, and the button will be hidden.
 
-`traverse_upward_url: "my-endpoint/load-up"`
+`traverse_up_url: "my-endpoint/load-up/%id"`
 
 ##### tree
 
 This prop contains an array of nested "branch" objects used to display the Nested Tree.
 
-Once provided, the information is processed into two internal trees: `data_tree` and `display_tree`.
+Once provided, the information is copied and processed into two internal trees: `processed_tree` and `displayed_tree`.
 
-* `data_tree` is a copy of the `tree` prop with additional fields added for visibility, pre-processed groups and percentages, and sub-data storage
-* `display_tree` contains the table rows that are currently visible within the table, extracted from the `data_tree`
+* `raw_tree` is a copy of the `tree` prop which is held internally for mutability; any loaded data gets added here
+* `processed_tree` is a refined copy of `raw_tree` with additional fields for visibility, groups, and percentages
+* `displayed_tree` contains the table rows that are currently visible within the table, extracted from the `processed_tree`
 
-The state of the tree is held internally in the `data_tree`. Actions, such as expanding levels or loading sub-data, change `data_tree` but do not alter the raw `tree`.
+The state of the tree is held internally in the `processed_tree`. Actions, such as expanding levels or loading sub-data, change `processed_tree` but do not alter the raw `tree`.
 
-If upward traversal is enabled, Nested Tree will attempt to maintain the state of `data_tree`, however if it cannot match the root nodes with the upward data set it may revert to a new state based on the loaded data.
+For large datasets, downward traversal allows the loading of children without requiring them in the initial tree. Any node with the `children` property set to `true` will request the data from `traverse_down_url` and merge the response array into the `processed_tree`.
+
+Subtree data can be provided or loaded on demand in a similar manner to children, however the subtree nodes may not have any child elements. The subtree's primary purpose is to list a single level of items related to a tree node. By default users will be prompted to load related data.
+
+When merging additional data Nested Tree will attempt to maintain the state of `processed_tree`, however if it cannot match the nodes it may revert to a collapsed state.
+
+Changing the `tree` prop will overwrite the entire tree.
 
 ```
 tree: [
@@ -181,17 +195,19 @@ tree: [
         id: 1,
         details: [ "Joe Red", "Job Title", "Organisation Unit" ],
         data: { recipients: 20, confirmed: 10, unavailable: 2, viewed: 4, unseen: 2, flagged: 1 },
-        children: []
+        children: [],
+        subtree: []
     }
 ]
 ```
 
-| Key      | Type            | Required | Default | Description                                                      |
-| -------- | --------------- | -------- | ------- | ---------------------------------------------------------------- |
-| id       | String, Integer | Yes      |         | A unique ID within the tree level                                |
-| details  | String, Array   | Yes      |         | The first value will be bolded, subsequent items will be smaller |
-| data     | Object          | Yes      |         | The data fields for the row                                      |
-| children | Array           | No       | []      | A nested array of "branch" objects                               |
+| Key      | Type            | Required | Default | Description                                                        |
+| -------- | --------------- | -------- | ------- | ------------------------------------------------------------------ |
+| id       | String, Integer | Yes      |         | A unique ID within the tree level                                  |
+| details  | String, Array   | Yes      |         | The first value will be bolded, subsequent items will be smaller   |
+| data     | Object          | Yes      |         | The data fields for the row                                        |
+| children | Array, Boolean  | No       | []      | A nested array of "branch" objects, or true if they can be loaded  |
+| subtree  | Array, Boolean  | No       | True    | A nested array of "subtree" objects, or true if they can be loaded |
 
 ### Tree Line
 
@@ -210,6 +226,7 @@ Replace a `<td>` element with a `<tree-line>` component, and pass one of the fol
 * elbow-up-right
 * elbow-down-left
 * elbow-down-right
+* none
 * straight-vertical
 * straight-horizontal
 * tee-up
@@ -221,7 +238,7 @@ Replace a `<td>` element with a `<tree-line>` component, and pass one of the fol
 
 | Name      | Type   | Required | Default | Sync | Validation          |
 | --------- | ------ | -------- | ------- | ---- | ------------------- |
-| direction | String | Yes      |         | No   | InArray *See usage* |
+| direction | String | No       | none    | No   | InArray *See usage* |
 
 ### Toggle Button
 

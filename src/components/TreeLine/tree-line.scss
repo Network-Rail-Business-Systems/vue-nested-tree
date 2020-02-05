@@ -11,7 +11,23 @@ td.tree-line {
     padding: 0;
 
     border-style: none;
+    
+    &.up {
+        border-top-style: none;
+    }
 
+    &.right {
+        border-right-style: none;
+    }
+    
+    &.down {
+        border-bottom-style: none;
+    }
+    
+    &.left {
+        border-left-style: none;
+    }
+    
     & > div {
         position: absolute;
 
@@ -22,6 +38,21 @@ td.tree-line {
             border-bottom-style: $tree-line-style;
             border-bottom-width: $tree-line-thickness;
             border-bottom-color: $tree-line-color;
+
+            &.full-width {
+                left: $tree-line-edge-gap;
+                width: $tree-line-full-size;
+            }
+
+            &.left-only {
+                left: $tree-line-edge-gap;
+                width: $tree-line-half-size;
+            }
+
+            &.right-only {
+                right: $tree-line-edge-gap;
+                width: $tree-line-half-size;
+            }
         }
 
         &.vertical {
@@ -31,36 +62,21 @@ td.tree-line {
             border-right-style: $tree-line-style;
             border-right-width: $tree-line-thickness;
             border-right-color: $tree-line-color;
-        }
 
-        &.full-height {
-            top: $tree-line-edge-gap;
-            height: $tree-line-full-size;
-        }
+            &.full-height {
+                top: $tree-line-edge-gap;
+                height: $tree-line-full-size;
+            }
 
-        &.up-only {
-            top: $tree-line-edge-gap;
-            height: $tree-line-half-size;
-        }
+            &.up-only {
+                top: $tree-line-edge-gap;
+                height: $tree-line-half-size;
+            }
 
-        &.down-only {
-            bottom: $tree-line-edge-gap;
-            height: $tree-line-half-size;
-        }
-
-        &.full-width {
-            left: $tree-line-edge-gap;
-            width: $tree-line-full-size;
-        }
-
-        &.left-only {
-            left: $tree-line-edge-gap;
-            width: $tree-line-half-size;
-        }
-
-        &.right-only {
-            right: $tree-line-edge-gap;
-            width: $tree-line-half-size;
+            &.down-only {
+                bottom: $tree-line-edge-gap;
+                height: $tree-line-half-size;
+            }
         }
     }
 }
