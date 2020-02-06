@@ -1,0 +1,11 @@
+table {
+    &.is-striped > tbody {
+        & > tr.subtree-row {
+            background-color: #f0f9fc;
+
+            &:not(.is-selected):nth-child(2n) {
+                background-color: #e6f3fa;
+            }
+        }
+    }
+}

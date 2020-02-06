@@ -65,20 +65,32 @@
                     <td :colspan="table_width">The tree is empty</td>
                 </tr>
                 
-                <tree-row
-                    v-else
-                    v-for="row in displayed_tree"
-                    :key="row.id"
-                    :row_data="row"
-                    :columns="columns"
-                    :groups="groups"
-                    :tree_width="details_width"
-                    :is_grouped="is_grouped"
-                    :is_percented="is_percented"
-                    :subtree_is_enabled="subtree_is_enabled"
-                    :subtree_url="subtree_url"
-                    :traverse_down_url="traverse_down_url"
-                ></tree-row>
+                <template v-else v-for="row in displayed_tree">
+                    <subtree-row
+                        v-if="row.type === 'subtree'"
+                        :key="row.id"
+                        :row_data="row"
+                        :columns="columns"
+                        :groups="groups"
+                        :tree_width="details_width"
+                        :is_grouped="is_grouped"
+                        :is_percented="is_percented"
+                    ></subtree-row>
+                    
+                    <tree-row
+                        v-else
+                        :key="row.id"
+                        :row_data="row"
+                        :columns="columns"
+                        :groups="groups"
+                        :tree_width="details_width"
+                        :is_grouped="is_grouped"
+                        :is_percented="is_percented"
+                        :subtree_is_enabled="subtree_is_enabled"
+                        :subtree_url="subtree_url"
+                        :traverse_down_url="traverse_down_url"
+                    ></tree-row>
+                </template>
             </tbody>
         </table>
     </div>
@@ -89,13 +101,15 @@
     import TreeRow from './components/TreeRow/TreeRow.vue';
     import {isNotBlank, objectsHaveKeys} from './mixins/FoxValidators.js';
     import ToggleButton from './components/ToggleButton/ToggleButton.vue';
+    import SubtreeRow from './components/SubtreeRow/SubtreeRow';
 
     export default {
         name: 'nested-tree',
         components: {
             FontAwesomeIcon,
             TreeRow,
-            ToggleButton
+            ToggleButton,
+            SubtreeRow
         },
         
         data: function ()
@@ -313,18 +327,16 @@
              */
             createTreeNode: function (sourceData, depth)
             {
-                let groups = this.groupData(sourceData.data);
-                let percents = this.percentData(sourceData.data, groups);
-                
-                return {
+                let node = {
+                    type: 'tree',
                     raw: sourceData,
                     parent: null,
                     
                     id: sourceData.id,
                     details: sourceData.details,
                     values: sourceData.data,
-                    groups: groups,
-                    percentages: percents,
+                    groups: null,
+                    percentages: null,
                     
                     children: {
                         available: sourceData.children === true,
@@ -337,30 +349,37 @@
                         available: typeof sourceData.subtree === 'undefined' || sourceData.subtree === true,
                         expanded: false,
                         loaded: Array.isArray(sourceData.subtree) === true,
-                        contents: this.processSubtree(sourceData.subtree)
+                        contents: null
                     },
                     
                     depth: depth,
                     levels: 0,
                     lines: []
-                }
+                };
+                
+                node.groups = this.groupData(sourceData.data);
+                node.percentages = this.percentData(sourceData.data, node.groups);
+                node.subtree.contents = this.processSubtree(sourceData.subtree, node);
+                
+                return node;
             },
             
             /**
              * Creates a flat subtree with percentage and grouping information
-             * @param subtreeRows Array The raw subtree data
+             * @param rawSubtree Array|Boolean The raw subtree array
+             * @param parent Object The tree node the subtree belongs to
              * @return Array An array of processed subtree rows
              */
-            processSubtree: function (subtreeRows)
+            processSubtree: function (rawSubtree, parent)
             {
                 let subtree = [];
                 
-                if (subtreeRows === true || subtreeRows === false) {
+                if (rawSubtree === true || rawSubtree === false) {
                     return subtree;
                 }
                 
-                for (let row in subtreeRows) {
-                    subtree.push(this.createSubtreeRow(subtreeRows[row]));
+                for (let index in rawSubtree) {
+                    subtree.push(this.createSubtreeRow(rawSubtree[index], parent));
                 }
                 
                 return subtree;
@@ -368,19 +387,26 @@
             /**
              * Creates a subtree row with percent and group data
              * @param subtreeRow Object The raw subtree row data
+             * @param parent Object The tree node this belongs to
              * @return Object The processed subtree row
              */
-            createSubtreeRow: function (subtreeRow)
+            createSubtreeRow: function (subtreeRow, parent)
             {
                 let groups = this.groupData(subtreeRow.data);
                 let percents = this.percentData(subtreeRow.data, groups);
                 
                 return {
+                    type: 'subtree',
+                    parent: parent,
+                    
                     id: subtreeRow.id,
-                        details: subtreeRow.details,
+                    details: subtreeRow.details,
                     values: subtreeRow.data,
                     groups: groups,
-                    percentages: percents
+                    percentages: percents,
+                    
+                    depth: parent.depth + 1,
+                    lines: []
                 };
             },
             
@@ -470,42 +496,29 @@
             /**
              * Recursively filters a tree node and its children for visible nodes
              * @param treeNode Object The nested tree dataset
-             * @param hasSiblingAfter Boolean Is there a following node on this level?
+             * @param hasSiblingAfter Boolean Whether there a node after this one
              * @return Array|Boolean A flat array of all visible nodes
              */
             filterVisibleNodes: function (treeNode, hasSiblingAfter = false)
             {
                 let visibleNodes = [];
-                let line;
                 
                 if (this.nodeIsVisible(treeNode) === false) {
                     return false;
                 }
                 
-                if (treeNode.parent !== null) {
-                    for (let index in treeNode.parent.lines) {
-                        
-                        switch (treeNode.parent.lines[index]) {
-                            case 'tee-right':
-                            case 'straight-vertical':
-                                treeNode.lines[index] = 'straight-vertical';
-                                break;    
-
-                            default:
-                                treeNode.lines[index] = 'none';
-                        }
-                    }
-                    
-                    if (hasSiblingAfter === true) {
-                        line = 'tee-right';
-                    } else {
-                        line = 'elbow-up-right';
-                    }
-                    
-                    treeNode.lines[treeNode.depth - 1] = line;
-                }
-                
+                this.calculatePassthroughLines(treeNode, hasSiblingAfter);
                 visibleNodes.push(treeNode);
+                
+                // Output subtree nodes
+                if (treeNode.subtree.expanded === true) {
+                    for (let index in treeNode.subtree.contents) {
+                        let subtreeNode = treeNode.subtree.contents[index];
+                        let hasSibling = parseInt(index) !== treeNode.subtree.contents.length - 1;
+                        this.calculatePassthroughLines(subtreeNode, hasSibling, true);
+                        visibleNodes.push(subtreeNode);
+                    }
+                }
                 
                 for (let index in treeNode.children.contents) {
                     let siblingAfter = parseInt(index) !== treeNode.children.contents.length - 1;
@@ -516,6 +529,45 @@
                 }
                 
                 return visibleNodes; 
+            },
+            
+            /**
+             * Determines where to place passthrough lines for tree visualisation
+             * @param node Object A tree node
+             * @param hasSiblingAfter Boolean Whether there is a node after this one
+             * @param isSubtree Boolean Whether this is a subtree node
+             */
+            calculatePassthroughLines: function (node, hasSiblingAfter = false, isSubtree = false)
+            {
+                let line;
+                let armIndex = node.depth - 1;
+                
+                if (node.parent !== null) {
+                    for (let index in node.parent.lines) {
+                        switch (node.parent.lines[index]) {
+                            case 'tee-right':
+                            case 'straight-vertical':
+                                node.lines[index] = 'straight-vertical';
+                                break;
+
+                            default:
+                                node.lines[index] = 'none';
+                        }
+                    }
+
+                    if (isSubtree === true) {
+                        node.lines[armIndex] = 'none';
+                        armIndex++;
+                    }
+                    
+                    if (hasSiblingAfter === true) {
+                        line = 'tee-right';
+                    } else {
+                        line = 'elbow-up-right';
+                    }
+
+                    node.lines[armIndex] = line;
+                }
             },
             
             /**

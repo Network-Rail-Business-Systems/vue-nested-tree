@@ -9,7 +9,7 @@
         </td>
         <tree-line v-else direction="straight-horizontal"></tree-line>
         
-        <td v-if="has_subtree === true" class="is-narrow has-text-primary is-interactive" @click="toggleExpandSubtree">
+        <td v-if="has_subtree === true" :class="expand_subtree_classes" @click="toggleExpandSubtree">
             <font-awesome-icon :icon="expand_subtree_icon" :pulse="is_loading_subtree" size="lg"></font-awesome-icon>
         </td>
         <td v-else>
@@ -217,6 +217,20 @@
                 return 'plus';
             },
             
+            expand_subtree_classes: function ()
+            {
+                let classes = [
+                    'is-narrow',
+                    'has-text-primary',
+                    'is-interactive'
+                ];
+                
+                if (this.row_data.subtree.expanded === true) {
+                    classes.push('expanded');
+                }
+                
+                return classes;
+            },
             expand_subtree_icon: function ()
             {
                 if (this.is_loading_subtree === true) {
