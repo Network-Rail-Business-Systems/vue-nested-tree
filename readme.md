@@ -6,6 +6,14 @@
 
 To use the nested tree interface include `NestedTree.vue` in your JavaScript and `nested-tree.scss` in your styles.
 
+You will need to install the FontAwesome icons that you want to use in your `app.js`.
+
+```javascript
+import {library} from "@fortawesome/fontawesome-svg-core";
+import {fas} from "@fortawesome/free-solid-svg-icons";
+library.add(fas);
+``` 
+
 ### Dependencies
 
 This interface makes use of the following external dependencies:
@@ -50,6 +58,7 @@ It is recommended to place the Nested Tree with minimal content to the left or r
 | Name              | Type    | Required | Default | Sync | Validation      |
 | ----------------- | ------- | -------- | ------- | ---- | --------------- |
 | columns           | Array   | Yes      |         | No   | objectsHaveKeys |
+| download_url      | String  | No       | null    | No   | isNotBlank      |
 | percentage_of     | String  | No       | null    | No   |                 |
 | start_group       | Boolean | No       | false   | No   |                 |
 | start_percented   | Boolean | No       | false   | No   |                 |
@@ -82,6 +91,12 @@ An array of objects is used to display fields held within the `data` prop while 
 | icon    | String  | Yes      |         | The font-awesome icon to display in the header                |
 | field   | String  | No       | *name*  | The matching `data` field; equal to lowercase `name` if blank |
 | percent | Boolean | No       | true    | Whether the column should be shown as a percent, if enabled   |
+
+##### download_url
+
+An endpoint where a downloadable version of the shown tree is available.
+
+The request will include the ID of the topmost root node to use as a starting point for the response.
 
 ##### groups
 

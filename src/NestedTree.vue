@@ -23,6 +23,12 @@
                     ></toggle-button>
                 </div>
                 
+                <div v-if="show_download_button === true" class="level-item">
+                    <a :href="processed_download_url" target="_blank">
+                        <font-awesome-icon icon="download" title="Download"></font-awesome-icon>
+                    </a>
+                </div>
+                
                 <slot name="header-right"></slot>
             </div>
         </div>
@@ -58,11 +64,17 @@
             
             <tbody>
                 <tr v-if="is_processing === true">
-                    <td :colspan="table_width">Processing...</td>
+                    <td :colspan="table_width" class="has-text-centered notification is-grey has-text-grey has-text-weight-bold">
+                        <font-awesome-icon icon="spinner" pulse class="inline-icon"></font-awesome-icon>
+                        Processing Tree...
+                    </td>
                 </tr>
                 
                 <tr v-else-if="tree_is_empty === true">
-                    <td :colspan="table_width">The tree is empty</td>
+                    <td :colspan="table_width" class="has-text-centered notification is-grey has-text-grey has-text-weight-bold">
+                        <font-awesome-icon icon="exclamation-triangle" class="inline-icon"></font-awesome-icon>
+                        No Tree to Show
+                    </td>
                 </tr>
                 
                 <template v-else v-for="row in displayed_tree">
@@ -256,7 +268,7 @@
 
                 return this.columns.length;
             },
-
+            
             grouping_is_enabled: function ()
             {
                 return this.groups.length > 0;
@@ -272,7 +284,24 @@
             subtree_is_enabled: function ()
             {
                 return this.subtree_url !== null;
-            }
+            },
+            
+            show_download_button: function ()
+            {
+                if (this.tree_is_empty === true) {
+                    return false;
+                }
+                
+                return this.download_url !== null;
+            },
+            processed_download_url: function ()
+            {
+                if (this.tree_is_empty === true) {
+                    return '';
+                }
+                
+                return this.download_url.replace('%id', this.displayed_tree[0].id);
+            },
         },
         
         methods: {
