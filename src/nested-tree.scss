@@ -11,6 +11,10 @@ table.nested-tree {
             border-bottom-style: none;
         }
         
+        & > p {
+            margin-top: 0;
+        }
+        
         & > svg.inline-icon {
             margin-right: 0.5em;
         }
