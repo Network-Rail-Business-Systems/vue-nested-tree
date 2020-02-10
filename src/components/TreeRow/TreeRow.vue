@@ -61,6 +61,7 @@
     import subtree_url from "../../mixins/props/subtree_url.js";
     import is_grouped from "../../mixins/props/is_grouped";
     import is_percented from "../../mixins/props/is_percented";
+    import tree_width from "../../mixins/props/tree_width";
     
     export default {
         name: 'tree-row',
@@ -76,6 +77,7 @@
             is_percented,
             subtree_url,
             traverse_down_url,
+            tree_width,
             NodeProcessing
         ],
         
@@ -111,11 +113,6 @@
                 ])
             },
 
-            tree_width: {
-                type: Number,
-                required: true
-            },
-            
             subtree_is_enabled: {
                 type: Boolean,
                 default: false

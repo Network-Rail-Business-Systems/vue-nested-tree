@@ -39,6 +39,7 @@
     import groups from "../../mixins/props/groups.js";
     import is_grouped from "../../mixins/props/is_grouped";
     import is_percented from "../../mixins/props/is_percented";
+    import tree_width from "../../mixins/props/tree_width";
 
     export default {
         name: 'subtree-row',
@@ -50,7 +51,8 @@
             columns,
             groups,
             is_grouped,
-            is_percented
+            is_percented,
+            tree_width
         ],
         
         props: {
@@ -69,10 +71,6 @@
                     'depth',
                     'lines'
                 ])
-            },
-            tree_width: {
-                type: Number,
-                required: true
             }
         },
         
