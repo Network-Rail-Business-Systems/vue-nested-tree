@@ -329,27 +329,6 @@
             },
             
             /**
-             * Creates a flat subtree with percentage and grouping information
-             * @param rawSubtree Array|Boolean The unprocessed subtree array
-             * @param parent Object The tree node the subtree belongs to
-             * @return Array An array of processed subtree rows
-             */
-            processSubtree: function (rawSubtree, parent)
-            {
-                let subtree = [];
-                
-                if (rawSubtree === true || rawSubtree === false) {
-                    return subtree;
-                }
-                
-                for (let index in rawSubtree) {
-                    subtree.push(this.createSubtreeRow(rawSubtree[index], parent));
-                }
-                
-                return subtree;
-            },
-
-            /**
              * Recursively filters a tree node and its children for visible nodes
              * @param treeNode Object The nested tree dataset
              * @param hasSiblingAfter Boolean Whether there a node after this one

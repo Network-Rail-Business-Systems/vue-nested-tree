@@ -43,6 +43,27 @@ export default {
 
             return node;
         },
+
+        /**
+         * Creates a flat subtree with percentage and grouping information
+         * @param rawSubtree Array|Boolean The unprocessed subtree array
+         * @param parent Object The tree node the subtree belongs to
+         * @return Array An array of processed subtree rows
+         */
+        processSubtree: function (rawSubtree, parent)
+        {
+            let subtree = [];
+
+            if (rawSubtree === true || rawSubtree === false) {
+                return subtree;
+            }
+
+            for (let index in rawSubtree) {
+                subtree.push(this.createSubtreeRow(rawSubtree[index], parent));
+            }
+
+            return subtree;
+        },
         
         /**
          * Creates a subtree row with percent and group data
