@@ -281,7 +281,7 @@
             },
             loadChildrenSuccess: function (response)
             {
-                this.row_data.raw.children = JSON.parse(response.data);
+                this.row_data.raw.children.contents = JSON.parse(response.data);
                 this.row_data.children.loaded = true;
                 this.row_data.children.expanded = true;
             },
@@ -317,7 +317,7 @@
             },
             loadSubtreeSuccess: function (response)
             {
-                this.row_data.raw.subtree = JSON.parse(response.data);
+                this.row_data.raw.subtree.contents = JSON.parse(response.data);
                 this.row_data.subtree.loaded = true;
                 this.row_data.subtree.expanded = true;
             },
