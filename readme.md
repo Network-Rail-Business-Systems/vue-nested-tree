@@ -190,11 +190,10 @@ This prop contains an array of nested "branch" objects used to display the Neste
 
 Once provided, the information is copied and processed into two internal trees: `processed_tree` and `displayed_tree`.
 
-* `raw_tree` is a copy of the `tree` prop which is held internally for mutability; any loaded data gets added here
 * `processed_tree` is a refined copy of `raw_tree` with additional fields for visibility, groups, and percentages
 * `displayed_tree` contains the table rows that are currently visible within the table, extracted from the `processed_tree`
 
-The state of the tree is held internally in the `processed_tree`. Actions, such as expanding levels or loading sub-data, change `processed_tree` but do not alter the raw `tree`.
+The state of the tree is held internally in the `processed_tree`. Actions such as expanding levels or loading sub-data change `processed_tree` but do not alter the raw `tree`.
 
 For large datasets, downward traversal allows the loading of children without requiring them in the initial tree. Any node with the `children` property set to `true` will request the data from `traverse_down_url` and merge the response array into the `processed_tree`.
 

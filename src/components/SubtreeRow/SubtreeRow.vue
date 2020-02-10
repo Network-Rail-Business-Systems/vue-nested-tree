@@ -34,13 +34,24 @@
 
 <script>
     import TreeLine from "../TreeLine/TreeLine";
-    import {objectHasKeys, objectsHaveKeys} from "../../mixins/FoxValidators";
+    import {objectHasKeys} from "../../mixins/FoxValidators";
+    import columns from "../../mixins/props/columns.js";
+    import groups from "../../mixins/props/groups.js";
+    import is_grouped from "../../mixins/props/is_grouped";
+    import is_percented from "../../mixins/props/is_percented";
 
     export default {
         name: 'subtree-row',
         components: {
             TreeLine
         },
+        
+        mixins: [
+            columns,
+            groups,
+            is_grouped,
+            is_percented
+        ],
         
         props: {
             row_data: {
@@ -59,35 +70,10 @@
                     'lines'
                 ])
             },
-            columns: {
-                type: Array,
-                required: true,
-                validator: objectsHaveKeys([
-                    'name',
-                    'icon'
-                ])
-            },
-            groups: {
-                type: Array,
-                default: function () { return []; },
-                validator: objectsHaveKeys([
-                    'name',
-                    'icon',
-                    'fields'
-                ])
-            },
             tree_width: {
                 type: Number,
                 required: true
-            },
-            is_grouped: {
-                type: Boolean,
-                default: false
-            },
-            is_percented: {
-                type: Boolean,
-                default: false
-            },
+            }
         },
         
         computed: {

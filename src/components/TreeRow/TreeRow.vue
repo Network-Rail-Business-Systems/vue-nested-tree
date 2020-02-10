@@ -53,8 +53,14 @@
     import {objectHasKeys} from '../../mixins/FoxValidators.js';
     import TreeLine from '../../components/TreeLine/TreeLine.vue';
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
-    import {isNotBlank, objectsHaveKeys} from "../../mixins/FoxValidators";
     import axios from 'axios';
+    import NodeProcessing from "../../mixins/methods/NodeProcessing.js";
+    import groups from "../../mixins/props/groups.js";
+    import columns from "../../mixins/props/columns.js";
+    import traverse_down_url from "../../mixins/props/traverse_down_url.js";
+    import subtree_url from "../../mixins/props/subtree_url.js";
+    import is_grouped from "../../mixins/props/is_grouped";
+    import is_percented from "../../mixins/props/is_percented";
     
     export default {
         name: 'tree-row',
@@ -62,6 +68,16 @@
             TreeLine,
             FontAwesomeIcon
         },
+        
+        mixins: [
+            columns,
+            groups,
+            is_grouped,
+            is_percented,
+            subtree_url,
+            traverse_down_url,
+            NodeProcessing
+        ],
         
         data: function ()
         {
@@ -78,7 +94,6 @@
                 type: Object,
                 required: true,
                 validator: objectHasKeys([
-                    'raw',
                     'parent',
                     
                     'id',
@@ -96,50 +111,14 @@
                 ])
             },
 
-            columns: {
-                type: Array,
-                required: true,
-                validator: objectsHaveKeys([
-                    'name',
-                    'icon'
-                ])
-            },
-            groups: {
-                type: Array,
-                default: function () { return []; },
-                validator: objectsHaveKeys([
-                    'name',
-                    'icon',
-                    'fields'
-                ])
-            },
-
             tree_width: {
                 type: Number,
                 required: true
-            },
-            is_grouped: {
-                type: Boolean,
-                default: false
-            },
-            is_percented: {
-                type: Boolean,
-                default: false
             },
             
             subtree_is_enabled: {
                 type: Boolean,
                 default: false
-            },
-            subtree_url: {
-                type: String,
-                default: null,
-                validator: isNotBlank()
-            },
-            traverse_down_url: {
-                type: String,
-                default: null,
-                validator: isNotBlank()
             }
         },
         
@@ -281,7 +260,12 @@
             },
             loadChildrenSuccess: function (response)
             {
-                this.row_data.raw.children.contents = JSON.parse(response.data);
+                for (let index in response.data) {
+                    this.children.contents.push(
+                        this.createTreeNode(response.data[index], this.row_data.depth)
+                    );
+                }
+                
                 this.row_data.children.loaded = true;
                 this.row_data.children.expanded = true;
             },
@@ -317,7 +301,13 @@
             },
             loadSubtreeSuccess: function (response)
             {
-                this.row_data.raw.subtree.contents = JSON.parse(response.data);
+                for (let index in response.data) {
+                    this.row_data.subtree.contents.push(
+                        this.createSubtreeRow(response.data[index], this.row_data)
+                    );
+                }
+                
+                this.row_data.subtree = response.data;
                 this.row_data.subtree.loaded = true;
                 this.row_data.subtree.expanded = true;
             },

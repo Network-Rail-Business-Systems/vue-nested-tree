@@ -111,9 +111,14 @@
 <script>
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
     import TreeRow from './components/TreeRow/TreeRow.vue';
-    import {isNotBlank, objectsHaveKeys} from './mixins/FoxValidators.js';
+    import {isNotBlank} from './mixins/FoxValidators.js';
     import ToggleButton from './components/ToggleButton/ToggleButton.vue';
     import SubtreeRow from './components/SubtreeRow/SubtreeRow';
+    import NodeProcessing from "./mixins/methods/NodeProcessing";
+    import columns from "./mixins/props/columns.js";
+    import groups from "./mixins/props/groups.js";
+    import traverse_down_url from "./mixins/props/traverse_down_url";
+    import subtree_url from "./mixins/props/subtree_url";
 
     export default {
         name: 'nested-tree',
@@ -124,12 +129,18 @@
             SubtreeRow
         },
         
+        mixins: [
+            columns,
+            groups,
+            subtree_url,
+            traverse_down_url,
+            NodeProcessing
+        ],
+        
         data: function ()
         {
             return {
-                raw_tree: this.tree,
                 processed_tree: [],
-                
                 is_processing: false,
                 is_grouped: this.start_grouped,
                 is_percented: this.start_percented
@@ -137,29 +148,10 @@
         },
         
         props: {
-            columns: {
-                type: Array,
-                required: true,
-                validator: objectsHaveKeys([
-                    'name',
-                    'icon'
-                ])
-            },
-            
             download_url: {
                 type: String,
                 default: null,
                 validator: isNotBlank()
-            },
-            
-            groups: {
-                type: Array,
-                default: function () { return []; },
-                validator: objectsHaveKeys([
-                    'name',
-                    'icon',
-                    'fields'
-                ])
             },
             
             percentage_of: {
@@ -178,21 +170,9 @@
                 default: false
             },
             
-            subtree_url: {
-                type: String,
-                default: null,
-                validator: isNotBlank()
-            },
-            
             title: {
                 type: String,
                 required: true,
-                validator: isNotBlank()
-            },
-            
-            traverse_down_url: {
-                type: String,
-                default: null,
                 validator: isNotBlank()
             },
             
@@ -326,7 +306,7 @@
             
             /**
              * Recursively creates tree nodes from a source tree
-             * @param sourceData Object The raw tree
+             * @param sourceData Object The unprocessed tree
              * @param depth Number How deep the node is
              * @return Object The processed tree
              */
@@ -347,55 +327,10 @@
                 
                 return treeNode;
             },
-
-            /**
-             * Turns an input tree node into a processed tree node with groups and percentages
-             * @param sourceData Object The raw data from the input tree
-             * @param depth Number How deep the node is
-             * @returns Object The processed tree node with added fields
-             */
-            createTreeNode: function (sourceData, depth)
-            {
-                let node = {
-                    type: 'tree',
-                    raw: sourceData,
-                    parent: null,
-                    
-                    id: sourceData.id,
-                    details: sourceData.details,
-                    values: sourceData.data,
-                    groups: null,
-                    percentages: null,
-                    
-                    children: {
-                        available: sourceData.children === true,
-                        expanded: depth === 0,
-                        loaded: Array.isArray(sourceData.children) === true,
-                        contents: []
-                    },
-                    
-                    subtree: {
-                        available: typeof sourceData.subtree === 'undefined' || sourceData.subtree === true,
-                        expanded: false,
-                        loaded: Array.isArray(sourceData.subtree) === true,
-                        contents: null
-                    },
-                    
-                    depth: depth,
-                    levels: 0,
-                    lines: []
-                };
-                
-                node.groups = this.groupData(sourceData.data);
-                node.percentages = this.percentData(sourceData.data, node.groups);
-                node.subtree.contents = this.processSubtree(sourceData.subtree, node);
-                
-                return node;
-            },
             
             /**
              * Creates a flat subtree with percentage and grouping information
-             * @param rawSubtree Array|Boolean The raw subtree array
+             * @param rawSubtree Array|Boolean The unprocessed subtree array
              * @param parent Object The tree node the subtree belongs to
              * @return Array An array of processed subtree rows
              */
@@ -412,114 +347,6 @@
                 }
                 
                 return subtree;
-            },
-            /**
-             * Creates a subtree row with percent and group data
-             * @param subtreeRow Object The raw subtree row data
-             * @param parent Object The tree node this belongs to
-             * @return Object The processed subtree row
-             */
-            createSubtreeRow: function (subtreeRow, parent)
-            {
-                let groups = this.groupData(subtreeRow.data);
-                let percents = this.percentData(subtreeRow.data, groups);
-                
-                return {
-                    type: 'subtree',
-                    parent: parent,
-                    
-                    id: subtreeRow.id,
-                    details: subtreeRow.details,
-                    values: subtreeRow.data,
-                    groups: groups,
-                    percentages: percents,
-                    
-                    depth: parent.depth + 1,
-                    lines: []
-                };
-            },
-            
-            /**
-             * Creates summed groups based on the groups settings
-             * @param data Object The data to replicate
-             * @return Object The grouped data
-             */
-            groupData: function (data)
-            {
-                let groupedData = {};
-                
-                if (this.grouping_is_enabled === false) {
-                    return groupedData;
-                }
-                
-                for (let group in this.groups) {
-                    group = this.groups[group];
-                    groupedData[group.field] = 0;
-                    
-                    for (let index in group.fields) {
-                        groupedData[group.field] += data[group.fields[index]];
-                    }
-                }
-                
-                return groupedData;
-            },
-            
-            /**
-             * Creates percentages based on the column specified in percentage_of
-             * @param ungroupedData Object The data to replicate
-             * @param groupedData Object The grouped data to replicate
-             * @return Object Percentage values in the same format as data
-             */
-            percentData: function (ungroupedData, groupedData)
-            {
-                let percents = {
-                    values: {},
-                    groups: {}
-                };
-                
-                if (this.percenting_is_enabled === false) {
-                    return percents;
-                }
-
-                let total = ungroupedData[this.percentage_of];
-                
-                percents.values = this.percentValues(ungroupedData, this.columns, total);
-                
-                if (this.grouping_is_enabled === true) {
-                    percents.groups = this.percentValues(groupedData, this.groups, total);
-                }
-                
-                return percents;
-            },
-            
-            /**
-             * Creates percentages for the given tree node data
-             * @param data Object The tree node data
-             * @param columns Array The columns to calculate against
-             * @param total Number The total to create a percentage of
-             * @return Object Percentages in the same format as the source data
-             */
-            percentValues: function (data, columns, total)
-            {
-                let values = {};
-                let value;
-                
-                for (let column in columns) {
-                    column = columns[column];
-
-                    if (column.field === this.percentage_of) {
-                        value = data[column.field];
-                    } else if (typeof column.percent !== 'undefined' && column.percent === false) {
-                        value = data[column.field];
-                    } else {
-                        value = data[column.field] / total;
-                        value = value.toFixed(2) * 100 + '%';
-                    }
-
-                    values[column.field] = value;
-                }
-                
-                return values;
             },
 
             /**
@@ -630,17 +457,13 @@
         
         mounted: function ()
         {
-            this.processed_tree = this.createProcessedTree(this.raw_tree);
+            this.processed_tree = this.createProcessedTree(this.tree);
         },
         
         watch: {
             tree: function ()
             {
-                this.raw_tree = this.tree;
-            },
-            raw_tree: function ()
-            {
-                this.processed_tree = this.createProcessedTree(this.raw_tree);
+                this.processed_tree = this.createProcessedTree(this.tree);
             }
         }
     }
