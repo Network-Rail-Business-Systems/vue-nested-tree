@@ -206,8 +206,10 @@ export default {
 
                 if (column.field === this.percentage_of) {
                     value = data[column.field];
+                    
                 } else if (typeof column.percent !== 'undefined' && column.percent === false) {
                     value = data[column.field];
+                    
                 } else {
                     value = data[column.field] / total;
                     value = value.toFixed(2) * 100 + '%';

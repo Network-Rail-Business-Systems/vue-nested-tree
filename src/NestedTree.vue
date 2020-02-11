@@ -98,6 +98,7 @@
                         :tree_width="details_width"
                         :is_grouped="is_grouped"
                         :is_percented="is_percented"
+                        :percentage_of="percentage_of"
                         :subtree_url="subtree_url"
                         :traverse_down_url="traverse_down_url"
                     ></tree-row>
@@ -121,6 +122,7 @@
     import grouping_is_enabled from "./mixins/computed/grouping_is_enabled";
     import subtree_is_enabled from "./mixins/computed/subtree_is_enabled";
     import percenting_is_enabled from "./mixins/computed/percenting_is_enabled";
+    import percentage_of from "./mixins/props/percentage_of";
 
     export default {
         name: 'nested-tree',
@@ -135,6 +137,7 @@
             columns,
             groups,
             grouping_is_enabled,
+            percentage_of,
             percenting_is_enabled,
             subtree_url,
             subtree_is_enabled,
@@ -154,12 +157,6 @@
         
         props: {
             download_url: {
-                type: String,
-                default: null,
-                validator: isNotBlank()
-            },
-            
-            percentage_of: {
                 type: String,
                 default: null,
                 validator: isNotBlank()

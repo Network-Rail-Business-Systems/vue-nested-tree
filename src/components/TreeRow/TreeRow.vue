@@ -65,6 +65,7 @@
     import subtree_is_enabled from "../../mixins/computed/subtree_is_enabled";
     import percenting_is_enabled from "../../mixins/computed/percenting_is_enabled";
     import grouping_is_enabled from "../../mixins/computed/grouping_is_enabled";
+    import percentage_of from "../../mixins/props/percentage_of";
     
     export default {
         name: 'tree-row',
@@ -79,6 +80,7 @@
             grouping_is_enabled,
             is_grouped,
             is_percented,
+            percentage_of,
             percenting_is_enabled,
             subtree_url,
             subtree_is_enabled,
