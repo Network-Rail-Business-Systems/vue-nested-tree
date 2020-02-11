@@ -13,7 +13,7 @@
             <font-awesome-icon :icon="expand_subtree_icon" :pulse="is_loading_subtree" size="lg"></font-awesome-icon>
         </td>
         <td v-else class="is-narrow has-text-grey-lighter">
-            <font-awesome-icon icon="angle-down" size="lg"></font-awesome-icon>
+            <font-awesome-icon :icon="expand_subtree_icon" size="lg"></font-awesome-icon>
         </td>
         
         <td :colspan="details_span">
@@ -217,10 +217,10 @@
                 }
 
                 if (this.row_data.subtree.expanded === true) {
-                    return 'angle-up';
+                    return 'angle-down';
                 }
 
-                return 'angle-down';
+                return 'angle-right';
             }
         },
         

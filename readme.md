@@ -176,9 +176,11 @@ If left blank the "expand" button will not show for nodes where `children: true`
 
 An endpoint where data from above the current tree's level can be loaded.
 
-The request will include the ID of the node to use as a reference; include a placeholder `%id` in the URL string.
+The request will include the ID of the topmost node to use as a reference; include a placeholder `%id` in the URL string.
 
-The response from the server should contain an array of tree objects, where one of the immediate children matches the existing root nodes.
+The response from the server should contain an array of tree objects, where one of the children matches the existing root nodes. 
+
+Nested Tree will attempt to maintain the existing structure, however if the topmost node is not present in the response dataset the existing tree will be discarded. If the topmost node is not an immediate child of the response dataset the existing tree will be preserved but likely collapsed and hidden within the response tree structure.
 
 If left blank upward traversal will be disabled, and the button will be hidden.
 

@@ -3,13 +3,5 @@ tr.tree-row {
         &.expanded {
             border-bottom-style: none;
         }
-        
-        & > div {
-            &.tag {
-                & > svg {
-                    margin-right: 0.5em;
-                }
-            }
-        }
     }
 }

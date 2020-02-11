@@ -36,11 +36,23 @@
         <table class="table is-striped nested-tree">
             <thead>
                 <tr>
-                    <th v-if="upward_traversal_is_enabled === true" class="is-narrow">
-                        <font-awesome-icon icon="angle-double-up"  title="Go Up One level" size="lg"></font-awesome-icon>
+                    <th v-if="upward_traversal_is_enabled === true" class="is-narrow is-interactive has-text-primary" @click="loadParent">
+                        <font-awesome-icon
+                            :icon="upward_traversal_icon"
+                            :pulse="is_loading_parent === true"
+                            title="Go Up One level"
+                            size="lg"
+                        ></font-awesome-icon>
                     </th>
                     
-                    <th :colspan="title_span">{{title}}</th>
+                    <th :colspan="title_span">
+                        <div class="tag is-danger" v-if="has_error === true">
+                            <font-awesome-icon icon="exclamation-triangle"></font-awesome-icon>
+                            {{ error_message }}
+                        </div>
+                        
+                        {{title}}
+                    </th>
                     
                     <template v-if="is_grouped === false"> 
                         <th
@@ -109,6 +121,7 @@
 </template>
 
 <script>
+    import axios from 'axios';
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
     import TreeRow from './components/TreeRow/TreeRow.vue';
     import {isNotBlank} from './mixins/FoxValidators.js';
@@ -151,7 +164,9 @@
                 processed_tree: [],
                 is_processing: false,
                 is_grouped: this.start_grouped,
-                is_percented: this.start_percented
+                is_percented: this.start_percented,
+                is_loading_parent: false,
+                error_message: null
             }
         },
         
@@ -255,6 +270,14 @@
             {
                 return this.traverse_up_url !== null;
             },
+            upward_traversal_icon: function ()
+            {
+                if (this.is_loading_parent === true) {
+                    return 'spinner';
+                }
+                
+                return 'angle-double-up';
+            },
             
             show_download_button: function ()
             {
@@ -272,6 +295,11 @@
                 
                 return this.download_url.replace('%id', this.displayed_tree[0].id);
             },
+            
+            has_error: function ()
+            {
+                return this.error_message !== null;
+            }
         },
         
         methods: {
@@ -405,6 +433,127 @@
             toggleGrouped: function ()
             {
                 this.is_grouped = !this.is_grouped;
+            },
+            
+            loadParent: function ()
+            {
+                if (this.is_loading_parent === true) {
+                    return;
+                }
+                
+                let url = this.traverse_up_url.replace('%id', this.processed_tree[0].id);
+                
+                this.is_loading_parent = true;
+                this.error_message = null;
+                
+                axios.get(url)
+                    .then(this.loadParentSuccess)
+                    .catch(this.loadParentFailure)
+                    .finally(this.loadParentCleanup);
+            },
+            loadParentSuccess: function (response)
+            {
+                let oldTree = this.processed_tree;
+                let parentTree = this.processTreeData(response.data);
+                
+                this.mergeChildTreeWithParent(parentTree, oldTree);
+                this.processed_tree = [parentTree];
+            },
+            loadParentFailure: function (error)
+            {
+                console.log(error);
+                this.error_message = 'Unable to go up the tree; please try again';
+            },
+            loadParentCleanup: function ()
+            {
+                this.is_loading_parent = false;
+            },
+
+            /**
+             * Locates the top-level node in the child tree within the parent tree and merges
+             * @param parentTree
+             * @param childTree
+             */
+            mergeChildTreeWithParent: function (parentTree, childTree)
+            {
+                let index = 0;
+                let nodeToJoin = childTree[0];
+                let targetNode = parentTree;
+                let targetAddress = this.findNodeWithinTree(nodeToJoin.id, parentTree);
+                
+                if (targetAddress === false) {
+                    return;
+                }
+                
+                targetAddress = targetAddress.split(',');
+                
+                for (index; index < targetAddress.length - 1; index++) {
+                    targetNode = targetNode.children.contents[targetAddress[index]];
+                }
+                
+                nodeToJoin.parent = targetNode;
+                
+                targetNode.children.contents.splice(index, 1);
+                targetNode.children.contents.push(nodeToJoin);
+                this.recalculateTreeDepthAndLevels(parentTree, 0);
+            },
+
+            /**
+             * Finds the nested index of the given node if it exists within the tree
+             * @param nodeId The node ID to find
+             * @param node The tree node to search
+             * @return String|Boolean A nested index [0, 1, 2] or false
+             */
+            findNodeWithinTree: function (nodeId, node)
+            {
+                for (let index in node.children.contents) {
+                    let childNode = node.children.contents[index];
+                    
+                    if (childNode.id === nodeId) {
+                        return index;
+                    }
+                    
+                    let result = this.findNodeWithinTree(nodeId, childNode);
+                    if (result !== false) {
+                        return index + ',' + result;
+                    }
+                }
+                
+                return false;
+            },
+
+            /**
+             * Recalculates the depth and level properties of the give tree node
+             * @param node
+             * @param depth
+             * @return Number The lowest depth reached
+             */
+            recalculateTreeDepthAndLevels: function (node, depth)
+            {
+                let lowestDepth = depth;
+                
+                node.depth = depth;
+                node.levels = 0;
+                
+                for (let index in node.subtree.contents) {
+                    node.subtree.contents[index].depth = depth + 1;
+                }
+                
+                for (let index in node.children.contents) {
+                    let lastDepth = this.recalculateTreeDepthAndLevels(node.children.contents[index], depth + 1);
+                    
+                    if (lastDepth > lowestDepth) {
+                        lowestDepth = lastDepth;
+                    }
+                    
+                    let level = lowestDepth - node.depth;
+                    
+                    if (level > node.levels) {
+                        node.levels = level;
+                    }
+                }
+                
+                return lowestDepth;
             }
         },
         

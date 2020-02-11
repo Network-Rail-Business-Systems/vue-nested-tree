@@ -23,4 +23,15 @@ table.nested-tree {
     & .is-interactive {
         cursor: pointer;
     }
+    
+    & td,
+    & th {
+        & > div {
+            &.tag {
+                & > svg {
+                    margin-right: 0.5em;
+                }
+            }
+        }
+    }
 }
