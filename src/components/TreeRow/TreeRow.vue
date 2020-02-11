@@ -12,8 +12,8 @@
         <td v-if="has_subtree === true" :class="expand_subtree_classes" @click="toggleExpandSubtree">
             <font-awesome-icon :icon="expand_subtree_icon" :pulse="is_loading_subtree" size="lg"></font-awesome-icon>
         </td>
-        <td v-else>
-            <font-awesome-icon class="has-text-grey-lighter" icon="angle-down" size="lg"></font-awesome-icon>
+        <td v-else class="is-narrow has-text-grey-lighter">
+            <font-awesome-icon icon="angle-down" size="lg"></font-awesome-icon>
         </td>
         
         <td :colspan="details_span">
@@ -62,6 +62,9 @@
     import is_grouped from "../../mixins/props/is_grouped";
     import is_percented from "../../mixins/props/is_percented";
     import tree_width from "../../mixins/props/tree_width";
+    import subtree_is_enabled from "../../mixins/computed/subtree_is_enabled";
+    import percenting_is_enabled from "../../mixins/computed/percenting_is_enabled";
+    import grouping_is_enabled from "../../mixins/computed/grouping_is_enabled";
     
     export default {
         name: 'tree-row',
@@ -73,9 +76,12 @@
         mixins: [
             columns,
             groups,
+            grouping_is_enabled,
             is_grouped,
             is_percented,
+            percenting_is_enabled,
             subtree_url,
+            subtree_is_enabled,
             traverse_down_url,
             tree_width,
             NodeProcessing
@@ -111,11 +117,6 @@
                     'levels',
                     'lines'
                 ])
-            },
-
-            subtree_is_enabled: {
-                type: Boolean,
-                default: false
             }
         },
         
@@ -175,10 +176,10 @@
             expand_children_classes: function ()
             {
                 if (this.has_children === true) {
-                    return 'has-tree-button has-text-primary is-interactive';
+                    return 'has-tree-button has-text-primary is-interactive is-narrow';
                 }
                 
-                return '';
+                return 'is-narrow';
             },
             expand_children_icon: function ()
             {
@@ -258,16 +259,17 @@
             loadChildrenSuccess: function (response)
             {
                 for (let index in response.data) {
-                    this.children.contents.push(
-                        this.createTreeNode(response.data[index], this.row_data.depth)
+                    this.row_data.children.contents.push(
+                        this.processTreeData(response.data[index], this.row_data)
                     );
                 }
                 
                 this.row_data.children.loaded = true;
                 this.row_data.children.expanded = true;
             },
-            loadChildrenFailure: function ()
+            loadChildrenFailure: function (error)
             {
+                console.log(error);
                 this.setErrorMessage('Unable to load children for this row; please try again');
                 this.row_data.expanded = false;
             },
@@ -308,8 +310,9 @@
                 this.row_data.subtree.loaded = true;
                 this.row_data.subtree.expanded = true;
             },
-            loadSubtreeFailure: function ()
+            loadSubtreeFailure: function (error)
             {
+                console.log(error);
                 this.setErrorMessage('Unable to load subtree for this row; please try again');
                 this.row_data.subtree.expanded = false;
             },

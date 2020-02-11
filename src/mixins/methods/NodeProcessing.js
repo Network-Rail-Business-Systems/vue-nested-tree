@@ -1,16 +1,61 @@
 export default {
     methods: {
         /**
+         * Recursively creates tree nodes from a source tree
+         * @param sourceData Object The unprocessed tree
+         * @param parent Number|Null The parent node
+         * @return Object The processed tree
+         */
+        processTreeData: function (sourceData, parent = null) {
+            let treeNode = this.createTreeNode(sourceData, parent);
+
+            if (typeof sourceData.children !== 'undefined' && sourceData.children.length > 0) {
+                for (let index in sourceData.children) {
+                    treeNode.children.contents.push(
+                        this.processTreeData(sourceData.children[index], treeNode)
+                    );
+                }
+            }
+
+            return treeNode;
+        },
+
+        /**
+         * Recursively update the node tree level numbering
+         * @param node The node to update
+         * @param lowestDepth Number The lowest depth
+         */
+        updateLevels: function (node, lowestDepth)
+        {
+            let level = lowestDepth - node.depth;
+            
+            if (level > node.levels) {
+                node.levels = level;
+            }
+
+            if (node.parent !== null) {
+                this.updateLevels(node.parent, lowestDepth);
+            }
+        },
+        
+        /**
          * Turns an input tree node into a processed tree node with groups and percentages
          * @param sourceData Object The unprocessed data from the input tree
-         * @param depth Number How deep the node is
+         * @param parent Number|Null The parent node
          * @returns Object The processed tree node with added fields
          */
-        createTreeNode: function (sourceData, depth)
+        createTreeNode: function (sourceData, parent = null)
         {
+            let depth = 0;
+            
+            if (parent !== null) {
+                depth = parent.depth + 1;
+                this.updateLevels(parent, depth);
+            }
+            
             let node = {
                 type: 'tree',
-                parent: null,
+                parent: parent,
 
                 id: sourceData.id,
                 details: sourceData.details,
@@ -20,7 +65,7 @@ export default {
 
                 children: {
                     available: sourceData.children === true,
-                    expanded: depth === 0,
+                    expanded: parent === null,
                     loaded: Array.isArray(sourceData.children) === true,
                     contents: []
                 },
@@ -40,7 +85,7 @@ export default {
             node.groups = this.groupData(sourceData.data);
             node.percentages = this.percentData(sourceData.data, node.groups);
             node.subtree.contents = this.processSubtree(sourceData.subtree, node);
-
+            
             return node;
         },
 

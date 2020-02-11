@@ -98,7 +98,6 @@
                         :tree_width="details_width"
                         :is_grouped="is_grouped"
                         :is_percented="is_percented"
-                        :subtree_is_enabled="subtree_is_enabled"
                         :subtree_url="subtree_url"
                         :traverse_down_url="traverse_down_url"
                     ></tree-row>
@@ -119,6 +118,9 @@
     import groups from "./mixins/props/groups.js";
     import traverse_down_url from "./mixins/props/traverse_down_url";
     import subtree_url from "./mixins/props/subtree_url";
+    import grouping_is_enabled from "./mixins/computed/grouping_is_enabled";
+    import subtree_is_enabled from "./mixins/computed/subtree_is_enabled";
+    import percenting_is_enabled from "./mixins/computed/percenting_is_enabled";
 
     export default {
         name: 'nested-tree',
@@ -132,7 +134,10 @@
         mixins: [
             columns,
             groups,
+            grouping_is_enabled,
+            percenting_is_enabled,
             subtree_url,
+            subtree_is_enabled,
             traverse_down_url,
             NodeProcessing
         ],
@@ -249,21 +254,9 @@
                 return this.columns.length;
             },
             
-            grouping_is_enabled: function ()
-            {
-                return this.groups.length > 0;
-            },
-            percenting_is_enabled: function ()
-            {
-                return this.percentage_of !== null;
-            },
             upward_traversal_is_enabled: function ()
             {
                 return this.traverse_up_url !== null;
-            },
-            subtree_is_enabled: function ()
-            {
-                return this.subtree_url !== null;
             },
             
             show_download_button: function ()
@@ -297,35 +290,13 @@
                 this.is_processing = true;
                 
                 for (let index in sourceTree) {
-                    processedTree.push(this.processTreeData(sourceTree[index]));
+                    processedTree.push(
+                        this.processTreeData(sourceTree[index])
+                    );
                 }
                 
                 this.is_processing = false;
                 return processedTree;
-            },
-            
-            /**
-             * Recursively creates tree nodes from a source tree
-             * @param sourceData Object The unprocessed tree
-             * @param depth Number How deep the node is
-             * @return Object The processed tree
-             */
-            processTreeData: function (sourceData, depth = 0) {
-                let treeNode = this.createTreeNode(sourceData, depth);
-
-                if (typeof sourceData.children !== 'undefined' && sourceData.children.length > 0) {
-                    for (let index in sourceData.children) {
-                        let childNode = this.processTreeData(sourceData.children[index], depth + 1);
-                        childNode.parent = treeNode;
-                        treeNode.children.contents.push(childNode);
-                        
-                        if (treeNode.levels < childNode.levels + 1) {
-                            treeNode.levels = childNode.levels + 1;
-                        }
-                    }
-                }
-                
-                return treeNode;
             },
             
             /**
