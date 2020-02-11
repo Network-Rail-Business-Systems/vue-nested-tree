@@ -308,7 +308,6 @@
                     );
                 }
                 
-                this.row_data.subtree = response.data;
                 this.row_data.subtree.loaded = true;
                 this.row_data.subtree.expanded = true;
             },

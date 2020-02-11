@@ -359,7 +359,13 @@
                     }
 
                     if (isSubtree === true) {
-                        node.lines[armIndex] = 'none';
+                        if (node.parent.children.expanded === true) {
+                            line = 'straight-vertical';
+                        } else {
+                            line = 'none';
+                        }
+                        
+                        node.lines[armIndex] = line;
                         armIndex++;
                     }
                     
