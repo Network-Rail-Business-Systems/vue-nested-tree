@@ -211,8 +211,7 @@ export default {
                     value = data[column.field];
                     
                 } else {
-                    value = data[column.field] / total;
-                    value = value.toFixed(2) * 100 + '%';
+                    value = Math.floor((data[column.field] / total) * 100) + '%';
                 }
 
                 values[column.field] = value;

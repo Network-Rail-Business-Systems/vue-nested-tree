@@ -46,7 +46,7 @@
                         <th
                             v-for="(column, index) in columns"
                             :key="index"
-                            class="is-narrow"
+                            class="is-narrow has-text-centered"
                         >
                             <font-awesome-icon :icon="column.icon" :title="column.name"></font-awesome-icon>
                         </th>

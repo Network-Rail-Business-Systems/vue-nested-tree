@@ -30,7 +30,7 @@
         </td>
         
         <template v-if="is_grouped === false">
-            <td v-for="(column, index) in columns" :key="index">
+            <td v-for="(column, index) in columns" :key="index" class="has-text-centered">
                 <template v-if="is_percented === true">
                     {{ row_data.percentages.values[column.field] }}
                 </template><template v-else>
