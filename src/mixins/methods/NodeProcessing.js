@@ -209,6 +209,9 @@ export default {
                     
                 } else if (typeof column.percent !== 'undefined' && column.percent === false) {
                     value = data[column.field];
+
+                } else if (total === 0) {
+                    value = 0 + '%';
                     
                 } else {
                     value = Math.floor((data[column.field] / total) * 100) + '%';

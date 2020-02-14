@@ -453,6 +453,10 @@
             },
             loadParentSuccess: function (response)
             {
+                if (response.data === "") {
+                    return;
+                }
+                // TODO Additional flag for no more parents
                 let oldTree = this.processed_tree;
                 let parentTree = this.processTreeData(response.data);
                 

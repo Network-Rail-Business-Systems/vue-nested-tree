@@ -182,6 +182,8 @@ The response from the server should contain an array of tree objects, where one 
 
 Nested Tree will attempt to maintain the existing structure, however if the topmost node is not present in the response dataset the existing tree will be discarded. If the topmost node is not an immediate child of the response dataset the existing tree will be preserved but likely collapsed and hidden within the response tree structure.
 
+If no parent is available the response should be `null`.
+
 If left blank upward traversal will be disabled, and the button will be hidden.
 
 `traverse_up_url: "my-endpoint/load-up/%id"`
