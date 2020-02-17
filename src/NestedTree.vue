@@ -2,26 +2,14 @@
     <div class="table-container">
         <div class="level is-mobile">
             <div class="level-left">
-                <div v-if="has_filter === true" class="level-item">
-                    <div class="select">
-                        <select
-                            @change="selectFilter"
-                            :class="filter_classes"
-                            :aria-label="filter_placeholder_text"
-                        >
-                            <option
-                                :selected="filter_has_been_selected === false"
-                                value=""
-                            >{{ filter_placeholder_text }}</option>
-                            
-                            <option
-                                v-for="option in filter_options"
-                                :key="option.id"
-                                :value="option.id"
-                                :selected="option.id === filter_id"
-                            >{{ option.label }}</option>
-                        </select>
-                    </div>
+                <div v-if="filter_is_enabled === true" class="level-item">
+                    <lookup-item
+                        @selected="selectFilter"
+                        @cleared="clearFilter"
+                        :initial_term="filter_initial_term"
+                        :lookup_url="filter_search_url"
+                        :placeholder="filter_placeholder"
+                    ></lookup-item>
                     
                     <a v-if="related_is_enabled === true" :href="processed_related_url" target="_blank">
                         <font-awesome-icon icon="eye" :title="related_text"></font-awesome-icon>
@@ -162,11 +150,12 @@
     import subtree_is_enabled from "./mixins/computed/subtree_is_enabled";
     import percenting_is_enabled from "./mixins/computed/percenting_is_enabled";
     import percentage_of from "./mixins/props/percentage_of";
-    import {objectsHaveKeys} from "./mixins/FoxValidators";
+    import LookupItem from "./components/LookupItem/LookupItem";
 
     export default {
         name: 'nested-tree',
         components: {
+            LookupItem,
             FontAwesomeIcon,
             TreeRow,
             ToggleButton,
@@ -205,23 +194,22 @@
                 validator: isNotBlank()
             },
             
-            filter_options: {
-                type: Array,
-                default: function () { return []; },
-                validator: objectsHaveKeys([
-                    'id',
-                    'label'
-                ])
-            },
-            filter_term: {
+            filter_initial_term: {
                 type: String,
-                default: 'item',
-                validator: isNotBlank()
+                default: ''
             },
-            filter_url: {
+            filter_search_url: {
                 type: String,
                 default: null,
                 validator: isNotBlank()
+            },
+            filter_load_url: {
+                type: String,
+                default: null,
+                validator: isNotBlank()
+            },
+            filter_placeholder: {
+                type: String
             },
             
             related_url: {
@@ -354,27 +342,17 @@
                 return this.error_message !== null;
             },
             
-            has_filter: function ()
+            filter_is_enabled: function ()
             {
-                if (this.filter_url === null) {
-                    return false;
+                if (this.filter_load_url !== null && this.filter_search_url !== null) {
+                    return true;
                 }
                 
-                return this.filter_options.length > 0;
-            },
-            filter_classes: function ()
-            {
-                if (this.filter_has_been_selected === false) {
-                    return 'has-text-grey';
-                }
+                return false;
             },
             filter_has_been_selected: function ()
             {
                 return this.filter_id !== null && this.filter_id !== ''
-            },
-            filter_placeholder_text: function ()
-            {
-                return 'Select ' + this.filter_term + '...';
             },
             
             related_is_enabled: function ()
@@ -658,7 +636,15 @@
             
             selectFilter: function (event)
             {
+                console.log("Filter selected", event);
                 this.filter_id = event.target.value;
+                
+                // Send request to endpoint with topmost node ID and selected ID
+            },
+            clearFilter: function ()
+            {
+                console.log("Filter cleared");
+                // Send request to endpoint with topmost node ID
             }
         },
         

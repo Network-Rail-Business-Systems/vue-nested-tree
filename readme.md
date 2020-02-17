@@ -55,22 +55,23 @@ It is recommended to place the Nested Tree with minimal content to the left or r
 
 #### Props
 
-| Name              | Type    | Required | Default | Sync | Validation      |
-| ----------------- | ------- | -------- | ------- | ---- | --------------- |
-| columns           | Array   | Yes      |         | No   | objectsHaveKeys |
-| download_url      | String  | No       | null    | No   | isNotBlank      |
-| filter_options    | Array   | No       | []      | No   | objectsHaveKeys |
-| filter_term       | String  | No       | item    | No   | isNotBlank      |
-| filter_url        | String  | No       | null    | No   | isNotBlank      |
-| percentage_of     | String  | No       | null    | No   |                 |
-| related_url       | String  | No       | null    | No   | isNotBlank      |
-| start_group       | Boolean | No       | false   | No   |                 |
-| start_percented   | Boolean | No       | false   | No   |                 |
-| subtree_url       | String  | No       | false   | No   | isNotBlank      |
-| title             | String  | Yes      |         | No   | isNotBlank      |
-| traverse_down_url | String  | No       | false   | No   | isNotBlank      |
-| traverse_up_url   | String  | No       | false   | No   |                 |
-| tree              | Array   | Yes      |         | No   |                 |
+| Name                | Type    | Required | Default | Sync | Validation      |
+| ------------------- | ------- | -------- | ------- | ---- | --------------- |
+| columns             | Array   | Yes      |         | No   | objectsHaveKeys |
+| download_url        | String  | No       | null    | No   | isNotBlank      |
+| filter_initial_term | String  | No       |         | No   |                 |
+| filter_load_url     | String  | No       |         | No   | isNotBlank      |
+| filter_search_url   | String  | No       |         | No   | isNotBlank      |
+| filter_placeholder  | String  | No       |         | No   |                 |
+| percentage_of       | String  | No       | null    | No   |                 |
+| related_url         | String  | No       | null    | No   | isNotBlank      |
+| start_group         | Boolean | No       | false   | No   |                 |
+| start_percented     | Boolean | No       | false   | No   |                 |
+| subtree_url         | String  | No       | false   | No   | isNotBlank      |
+| title               | String  | Yes      |         | No   | isNotBlank      |
+| traverse_down_url   | String  | No       | false   | No   | isNotBlank      |
+| traverse_up_url     | String  | No       | false   | No   |                 |
+| tree                | Array   | Yes      |         | No   |                 |
 
 ##### columns
 
@@ -102,48 +103,17 @@ An endpoint where a downloadable version of the shown tree is available.
 
 The request will include the ID of the topmost root node to use as a starting point for the response.
 
-##### filter_options
-
-An array of filter objects that can be selected to refine the tree to a related item.
-
-Each filterable object must contain an ID and a label. When an item is selected nested tree will send a request to the server for an updated dataset via the `filter_url` endpoint.
-
-To select an item by default, add a `selected` property to the object. Nested tree will not perform a data load, so ensure that the provided `tree` is already filtered.
-
-```
-[
-    {
-        id: 1,
-        label: "Cabbage"
-    },
-    {
-        id: 2,
-        label: "Potato"
-        selected: true
-    }
-]
-```
-
-##### filter_term
-
-A word that describes the related item which will be shown on the filter select placeholder.
-
-```
-/* Select vegetable... */
-filter_term: "vegetable"
-```
-
 ##### filter_url
 
 An endpoint where an updated dataset for a specific related item can be retrieved.
 
 The request will include the ID of the top-most node to use as a reference; include a placeholder `%id` in the URL string. It will also include the related item's ID; include a placeholder '%filter' in the URL string.
 
-When the filter is removed a request will be sent to the same endpoint without any values; in this case an unfiltered tree should be returned.
+When the filter is removed a request will be sent to the same endpoint with the top-most node's ID and a null filter value; in this case an unfiltered tree should be returned.
 
 If left blank the filter select and related buttons will be hidden.
 
-`filter_url: "endpoint/filter/%id/%filter"`
+`filter_url: "endpoint/%id/filter/%filter"`
 
 ##### groups
 
@@ -327,3 +297,42 @@ Replace a `<td>` element with a `<tree-line>` component, and pass one of the fol
 | label     | String  | No       | ""      | No   |                     |
 | label_on  | String  | No       | ""      | No   |                     |
 | label_off | String  | No       | ""      | No   |                     |
+
+### LookupItem
+
+#### Usage
+
+A POST request is sent to the `lookup_url` containing the `search_term` field.
+
+The server response must contain an array of objects with the following properties; other properties may be included but will not be parsed, though they will be available to any parent component via the `select` event:
+
+```
+[
+    { id: , details: [] },
+    { id: 1, details: ["Main Title", "Subtitle", ...] }
+]
+```
+
+The details array should contain rows of information to allow the user to distinguish similar entries. The first item in the array will be bolded and used as the visible title if selected.
+
+If there are no matches the server should return either an empty / null response or an empty array. 
+
+If a term should be already present in the input box, you may pass an `initial_term`.
+
+#### Props
+
+| Name         | Type    | Required | Default           | Sync | Validation              |
+| ------------ | ------- | -------- | ----------------- | ---- | ----------------------- |
+| initial_term | String  | No       |                   | No   |                         |
+| lookup_url   | String  | Yes      |                   | No   | isNotBlank()            |
+| min_length   | Number  | No       | 3                 | No   | greaterThanOrEqualTo(0) |
+| placeholder  | String  | No       | Type to search... | No   | isNotBlank()            |
+
+#### Events
+
+| Name      | Trigger                     | Value          |
+| --------- | --------------------------- | -------------- |
+| cleared   | The clear button is pressed |                |
+| searched  | A search has been completed | search_term    |
+| searching | A search has been initiated |                |
+| selected  | An item has been selected   | selected_item  |

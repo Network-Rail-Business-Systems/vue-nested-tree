@@ -19,12 +19,12 @@
                         { name: "Flagged", field: "flagged", icon: "flag", percent: false }
                     ]'
                     download_url="potato/download"
-                    :filter_options='[
-                        { id: 1, label: "Potato" },
-                        { id: 2, label: "Cabbage", selected: true }
-                    ]'
-                    filter_term="briefing"
-                    filter_url="endpoint/filter/%id/%filter"
+                    
+                    filter_initial_term="Potatochan"
+                    filter_search_url="potato/search"
+                    filter_load_url="endpoint/filter/%id/%filter"
+                    filter_placeholder="Find a briefing..."
+                    
                     :groups='[
                         { name: "Recipients", field: "recipients", icon: "user", fields: ["recipients"] },
                         { name: "Confirmed", field: "confirmed", icon: "check", fields: ["confirmed", "unavailable"] },

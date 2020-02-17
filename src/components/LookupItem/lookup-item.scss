@@ -1,0 +1,25 @@
+div.lookup-item {
+    & div.control {
+        &.has-icons-right {
+            & > span.is-interactive {
+                cursor: pointer;
+                pointer-events: all;
+            } 
+        }
+    }
+    
+    & div.dropdown-item {
+        cursor: pointer;
+        
+        &:hover {
+            background-color: #f5f5f5;
+            color: #000000;
+        }
+        
+        & > div.level {
+            & > p.level-item {
+                flex-shrink: 1;
+            }
+        }
+    }
+}
