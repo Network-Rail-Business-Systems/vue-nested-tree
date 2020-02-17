@@ -19,6 +19,12 @@
                         { name: "Flagged", field: "flagged", icon: "flag", percent: false }
                     ]'
                     download_url="potato/download"
+                    :filter_options='[
+                        { id: 1, label: "Potato" },
+                        { id: 2, label: "Cabbage", selected: true }
+                    ]'
+                    filter_term="briefing"
+                    filter_url="endpoint/filter/%id/%filter"
                     :groups='[
                         { name: "Recipients", field: "recipients", icon: "user", fields: ["recipients"] },
                         { name: "Confirmed", field: "confirmed", icon: "check", fields: ["confirmed", "unavailable"] },
@@ -26,6 +32,7 @@
                         { name: "Flagged", field: "flagged", icon: "flag", fields: ["flagged"], percent: false }
                     ]'
                     percentage_of="recipients"
+                    related_url="potato/related/%id"
                     start_grouped
                     start_percented
                     subtree_url="subtree/%id"

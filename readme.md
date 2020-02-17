@@ -59,7 +59,11 @@ It is recommended to place the Nested Tree with minimal content to the left or r
 | ----------------- | ------- | -------- | ------- | ---- | --------------- |
 | columns           | Array   | Yes      |         | No   | objectsHaveKeys |
 | download_url      | String  | No       | null    | No   | isNotBlank      |
+| filter_options    | Array   | No       | []      | No   | objectsHaveKeys |
+| filter_term       | String  | No       | item    | No   | isNotBlank      |
+| filter_url        | String  | No       | null    | No   | isNotBlank      |
 | percentage_of     | String  | No       | null    | No   |                 |
+| related_url       | String  | No       | null    | No   | isNotBlank      |
 | start_group       | Boolean | No       | false   | No   |                 |
 | start_percented   | Boolean | No       | false   | No   |                 |
 | subtree_url       | String  | No       | false   | No   | isNotBlank      |
@@ -98,6 +102,49 @@ An endpoint where a downloadable version of the shown tree is available.
 
 The request will include the ID of the topmost root node to use as a starting point for the response.
 
+##### filter_options
+
+An array of filter objects that can be selected to refine the tree to a related item.
+
+Each filterable object must contain an ID and a label. When an item is selected nested tree will send a request to the server for an updated dataset via the `filter_url` endpoint.
+
+To select an item by default, add a `selected` property to the object. Nested tree will not perform a data load, so ensure that the provided `tree` is already filtered.
+
+```
+[
+    {
+        id: 1,
+        label: "Cabbage"
+    },
+    {
+        id: 2,
+        label: "Potato"
+        selected: true
+    }
+]
+```
+
+##### filter_term
+
+A word that describes the related item which will be shown on the filter select placeholder.
+
+```
+/* Select vegetable... */
+filter_term: "vegetable"
+```
+
+##### filter_url
+
+An endpoint where an updated dataset for a specific related item can be retrieved.
+
+The request will include the ID of the top-most node to use as a reference; include a placeholder `%id` in the URL string. It will also include the related item's ID; include a placeholder '%filter' in the URL string.
+
+When the filter is removed a request will be sent to the same endpoint without any values; in this case an unfiltered tree should be returned.
+
+If left blank the filter select and related buttons will be hidden.
+
+`filter_url: "endpoint/filter/%id/%filter"`
+
 ##### groups
 
 An array of objects used to determine how to combine `data` fields, and how to display them on the table when grouping is enabled.
@@ -134,6 +181,14 @@ If left blank percentages will be disabled and the toggle button will be hidden.
 
 `percentage_of: "data_field"`
 
+##### related_url
+
+A URL where a related resource can be viewed. This button is only visible when a filter is applied to the nested tree; the link will open in a new tab.
+
+The request will include the ID of the selected filter to use as a reference; include a placeholder `%id` in the URL string.
+
+`related_url: "my-endpoint/related/%id"`
+
 ##### start_grouped
 
 Whether to initially display the tree using groups.
@@ -150,9 +205,13 @@ Whether to initially display the tree using percentages.
 
 An endpoint where subtree data for a given ID can be loaded.
 
+The request will include the ID of the node to use as a reference; include a placeholder `%id` in the URL string.
+
 The response from the server should contain an array of "branch" objects (see the `tree` prop). Children and Subtree items will be ignored at the subtree level, and may be excluded from the response.
 
 If left blank the subtree button will be disabled for any node without a populated subtree array.
+
+`subtree_url: "my-endpoint/load-subtree/%id"`
 
 ##### title
 

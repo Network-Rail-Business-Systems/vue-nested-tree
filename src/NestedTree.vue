@@ -2,6 +2,32 @@
     <div class="table-container">
         <div class="level is-mobile">
             <div class="level-left">
+                <div v-if="has_filter === true" class="level-item">
+                    <div class="select">
+                        <select
+                            @change="selectFilter"
+                            :class="filter_classes"
+                            :aria-label="filter_placeholder_text"
+                        >
+                            <option
+                                :selected="filter_has_been_selected === false"
+                                value=""
+                            >{{ filter_placeholder_text }}</option>
+                            
+                            <option
+                                v-for="option in filter_options"
+                                :key="option.id"
+                                :value="option.id"
+                                :selected="option.id === filter_id"
+                            >{{ option.label }}</option>
+                        </select>
+                    </div>
+                    
+                    <a v-if="related_is_enabled === true" :href="processed_related_url" target="_blank">
+                        <font-awesome-icon icon="eye" :title="related_text"></font-awesome-icon>
+                    </a>                    
+                </div>
+                
                 <div class="level-item"><slot name="header-left"></slot></div>
             </div>
             
@@ -136,6 +162,7 @@
     import subtree_is_enabled from "./mixins/computed/subtree_is_enabled";
     import percenting_is_enabled from "./mixins/computed/percenting_is_enabled";
     import percentage_of from "./mixins/props/percentage_of";
+    import {objectsHaveKeys} from "./mixins/FoxValidators";
 
     export default {
         name: 'nested-tree',
@@ -166,12 +193,38 @@
                 is_grouped: this.start_grouped,
                 is_percented: this.start_percented,
                 is_loading_parent: false,
-                error_message: null
+                error_message: null,
+                filter_id: null
             }
         },
         
         props: {
             download_url: {
+                type: String,
+                default: null,
+                validator: isNotBlank()
+            },
+            
+            filter_options: {
+                type: Array,
+                default: function () { return []; },
+                validator: objectsHaveKeys([
+                    'id',
+                    'label'
+                ])
+            },
+            filter_term: {
+                type: String,
+                default: 'item',
+                validator: isNotBlank()
+            },
+            filter_url: {
+                type: String,
+                default: null,
+                validator: isNotBlank()
+            },
+            
+            related_url: {
                 type: String,
                 default: null,
                 validator: isNotBlank()
@@ -299,6 +352,49 @@
             has_error: function ()
             {
                 return this.error_message !== null;
+            },
+            
+            has_filter: function ()
+            {
+                if (this.filter_url === null) {
+                    return false;
+                }
+                
+                return this.filter_options.length > 0;
+            },
+            filter_classes: function ()
+            {
+                if (this.filter_has_been_selected === false) {
+                    return 'has-text-grey';
+                }
+            },
+            filter_has_been_selected: function ()
+            {
+                return this.filter_id !== null && this.filter_id !== ''
+            },
+            filter_placeholder_text: function ()
+            {
+                return 'Select ' + this.filter_term + '...';
+            },
+            
+            related_is_enabled: function ()
+            {
+                if (
+                    this.related_url !== null
+                    && this.filter_has_been_selected === true
+                ) {
+                    return true;
+                }
+                
+                return false;
+            },
+            related_text: function ()
+            {
+                return 'View ' + this.filter_term;
+            },
+            processed_related_url: function ()
+            {
+                return this.related_url.replace('%id', this.filter_id);
             }
         },
         
@@ -558,6 +654,11 @@
                 }
                 
                 return lowestDepth;
+            },
+            
+            selectFilter: function (event)
+            {
+                this.filter_id = event.target.value;
             }
         },
         

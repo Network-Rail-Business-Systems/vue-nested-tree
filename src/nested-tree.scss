@@ -3,6 +3,12 @@
 @import './components/TreeRow/tree-row.scss';
 @import './components/SubtreeRow/subtree-row.scss';
 
+div.select {
+    & + a {
+        margin-left: 0.5em;
+    }
+}
+
 table.nested-tree {
     & td {
         vertical-align: middle;
