@@ -367,7 +367,7 @@
             },
             processed_download_url: function ()
             {
-                if (this.tree_is_empty === true) {
+                if (this.tree_is_empty === true || this.top_node === null) {
                     return '';
                 }
                 
@@ -376,6 +376,10 @@
             
             can_traverse_upward: function ()
             {
+                if (this.top_node === null) {
+                    return false;
+                }
+                
                 return this.upward_traversal_is_enabled === true && this.top_node.parent === true;
             },
             has_load_parent_error: function ()
