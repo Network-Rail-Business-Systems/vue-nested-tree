@@ -60,9 +60,9 @@
                     </th>
                     
                     <th :colspan="title_span">
-                        <div class="tag is-danger" v-if="has_error === true">
+                        <div class="tag is-danger" v-if="has_load_parent_error === true">
                             <font-awesome-icon icon="exclamation-triangle"></font-awesome-icon>
-                            {{ error_message }}
+                            {{ load_parent_error }}
                         </div>
                         
                         {{title}}
@@ -89,7 +89,14 @@
             </thead>
             
             <tbody>
-                <tr v-if="is_processing === true">
+                <tr v-if="is_loading_tree === true">
+                    <td :colspan="table_width" class="has-text-centered notification is-grey has-text-grey has-text-weight-bold">
+                        <font-awesome-icon icon="spinner" pulse class="inline-icon"></font-awesome-icon>
+                        Loading Tree...
+                    </td>
+                </tr>
+                
+                <tr v-else-if="is_processing === true">
                     <td :colspan="table_width" class="has-text-centered notification is-grey has-text-grey has-text-weight-bold">
                         <font-awesome-icon icon="spinner" pulse class="inline-icon"></font-awesome-icon>
                         Processing Tree...
@@ -102,32 +109,41 @@
                         No Tree to Show
                     </td>
                 </tr>
-                
-                <template v-else v-for="row in displayed_tree">
-                    <subtree-row
-                        v-if="row.type === 'subtree'"
-                        :key="row.id"
-                        :row_data="row"
-                        :columns="columns"
-                        :groups="groups"
-                        :tree_width="details_width"
-                        :is_grouped="is_grouped"
-                        :is_percented="is_percented"
-                    ></subtree-row>
+
+                <template v-else>
+                    <tr v-if="has_load_tree_error === true">
+                        <td :colspan="table_width" class="has-text-centered notification is-danger has-text-weight-bold">
+                            <font-awesome-icon icon="exclamation-triangle" class="inline-icon"></font-awesome-icon>
+                            {{ load_tree_error }}
+                        </td>
+                    </tr>
                     
-                    <tree-row
-                        v-else
-                        :key="row.id"
-                        :row_data="row"
-                        :columns="columns"
-                        :groups="groups"
-                        :tree_width="details_width"
-                        :is_grouped="is_grouped"
-                        :is_percented="is_percented"
-                        :percentage_of="percentage_of"
-                        :subtree_url="subtree_url"
-                        :traverse_down_url="traverse_down_url"
-                    ></tree-row>
+                    <template v-for="row in displayed_tree">
+                        <subtree-row
+                            v-if="row.type === 'subtree'"
+                            :key="row.id"
+                            :row_data="row"
+                            :columns="columns"
+                            :groups="groups"
+                            :tree_width="details_width"
+                            :is_grouped="is_grouped"
+                            :is_percented="is_percented"
+                        ></subtree-row>
+                        
+                        <tree-row
+                            v-else
+                            :key="row.id"
+                            :row_data="row"
+                            :columns="columns"
+                            :groups="groups"
+                            :tree_width="details_width"
+                            :is_grouped="is_grouped"
+                            :is_percented="is_percented"
+                            :percentage_of="percentage_of"
+                            :subtree_url="subtree_url"
+                            :traverse_down_url="traverse_down_url"
+                        ></tree-row>
+                    </template>
                 </template>
             </tbody>
         </table>
@@ -182,7 +198,9 @@
                 is_grouped: this.start_grouped,
                 is_percented: this.start_percented,
                 is_loading_parent: false,
-                error_message: null,
+                is_loading_tree: false,
+                load_parent_error: null,
+                load_tree_error: null,
                 filter_id: null
             }
         },
@@ -319,6 +337,14 @@
                 
                 return 'angle-double-up';
             },
+            top_node: function ()
+            {
+                if (this.processed_tree.length < 1) {
+                    return null;
+                }
+                
+                return this.processed_tree[0];
+            },
             
             show_download_button: function ()
             {
@@ -337,9 +363,13 @@
                 return this.download_url.replace('%id', this.displayed_tree[0].id);
             },
             
-            has_error: function ()
+            has_load_parent_error: function ()
             {
-                return this.error_message !== null;
+                return this.load_parent_error !== null;
+            },
+            has_load_tree_error: function ()
+            {
+                return this.load_tree_error !== null;
             },
             
             filter_is_enabled: function ()
@@ -515,10 +545,10 @@
                     return;
                 }
                 
-                let url = this.traverse_up_url.replace('%id', this.processed_tree[0].id);
+                let url = this.traverse_up_url.replace('%id', this.top_node.id);
                 
                 this.is_loading_parent = true;
-                this.error_message = null;
+                this.load_parent_error = null;
                 
                 axios.get(url)
                     .then(this.loadParentSuccess)
@@ -540,7 +570,7 @@
             loadParentFailure: function (error)
             {
                 console.log(error);
-                this.error_message = 'Unable to go up the tree; please try again';
+                this.load_parent_error = 'Unable to go up the tree; please try again';
             },
             loadParentCleanup: function ()
             {
@@ -636,15 +666,50 @@
             
             selectFilter: function (item)
             {
-                console.log("Filter selected", item);
                 this.filter_id = item.id;
-                
-                // Send request to endpoint with topmost node ID and selected ID
+                this.loadTree();
             },
             clearFilter: function ()
             {
-                console.log("Filter cleared");
-                // Send request to endpoint with topmost node ID
+                this.filter_id = null;
+                this.loadTree();
+            },
+            
+            loadTree: function ()
+            {
+                this.is_loading_tree = true;
+                this.load_tree_error = null;
+                
+                let url = this.filter_load_url.replace('%id', this.top_node.id);
+                
+                if (this.filter_id !== null) {
+                    url = url.replace('%filter', this.filter_id);
+                } else {
+                    url = url.replace('/%filter', '');
+                }
+                
+                axios.get(url)
+                    .then(this.loadTreeSuccess)
+                    .catch(this.loadTreeFailure)
+                    .finally(this.loadTreeCleanup);
+            },
+            loadTreeSuccess: function (response)
+            {
+                if (response.data === '' || response.data.length < 1) {
+                    this.loadTreeFailure();
+                    return;
+                }
+                
+                this.processed_tree = this.createProcessedTree(response.data);
+            },
+            loadTreeFailure: function (error)
+            {
+                console.log(error);
+                this.load_tree_error = 'Unable to load the requested tree; please try again';
+            },
+            loadTreeCleanup: function ()
+            {
+                this.is_loading_tree = false;
             }
         },
         
