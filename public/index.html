@@ -18,7 +18,7 @@
                         { name: "Unseen", field: "unseen", icon: "eye-slash" },
                         { name: "Flagged", field: "flagged", icon: "flag", percent: false }
                     ]'
-                    download_url="potato/download"
+                    download_url="potato/download/%id/%filter"
                     
                     filter_initial_term="Potatochan"
                     filter_search_url="potato/search"
@@ -35,10 +35,10 @@
                     related_url="potato/related/%id"
                     start_grouped
                     start_percented
-                    subtree_url="subtree/%id"
+                    subtree_url="subtree/%id/%filter"
                     title="Team Leader"
-                    traverse_down_url="traverse-down/%id"
-                    traverse_up_url="traverse-up/%id"
+                    traverse_down_url="traverse-down/%id/%filter"
+                    traverse_up_url="traverse-up/%id/%filter"
                     :tree='[
                         {
                             id: 1,

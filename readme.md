@@ -101,7 +101,7 @@ An array of objects is used to display fields held within the `data` prop while 
 
 An endpoint where a downloadable version of the shown tree is available.
 
-The request will include the ID of the topmost root node to use as a starting point for the response.
+The request will include the ID of the topmost root node to use as a starting point for the response. Include a `%filter` placeholder if you wish to use filtering.
 
 ##### filter_url
 
@@ -175,7 +175,7 @@ Whether to initially display the tree using percentages.
 
 An endpoint where subtree data for a given ID can be loaded.
 
-The request will include the ID of the node to use as a reference; include a placeholder `%id` in the URL string.
+The request will include the ID of the node to use as a reference; include a placeholder `%id` in the URL string. Include a `%filter` placeholder if you wish to use filtering.
 
 The response from the server should contain an array of "branch" objects (see the `tree` prop). Children and Subtree items will be ignored at the subtree level, and may be excluded from the response.
 
@@ -193,7 +193,7 @@ The overarching description for the presented tree that will be shown in the tab
 
 An endpoint where data from below the current node's level can be loaded.
 
-The request will include the ID of the node to use as a reference; include a placeholder `%id` in the URL string.
+The request will include the ID of the node to use as a reference; include a placeholder `%id` in the URL string. Include a `%filter` placeholder if you wish to use filtering.
 
 The response from the server should contain an array of tree objects, which may contain further children.
 
@@ -205,15 +205,17 @@ If left blank the "expand" button will not show for nodes where `children: true`
 
 An endpoint where data from above the current tree's level can be loaded.
 
-The request will include the ID of the topmost node to use as a reference; include a placeholder `%id` in the URL string.
+The request will include the ID of the topmost node to use as a reference; include a placeholder `%id` in the URL string. Include a `%filter` placeholder if you wish to use filtering.
 
 The response from the server should contain an array of tree objects, where one of the children matches the existing root nodes. 
 
 Nested Tree will attempt to maintain the existing structure, however if the topmost node is not present in the response dataset the existing tree will be discarded. If the topmost node is not an immediate child of the response dataset the existing tree will be preserved but likely collapsed and hidden within the response tree structure.
 
-If no parent is available the response should be `null`.
+If no parent is available the response should be empty or `null`.
 
-If left blank upward traversal will be disabled, and the button will be hidden.
+Ensure that you provide a `parent` property on any tree nodes that have parents available; omitting the property will disable the button. 
+
+If left blank, upward traversal will be disabled and the button will be hidden.
 
 `traverse_up_url: "my-endpoint/load-up/%id"`
 
@@ -243,7 +245,8 @@ tree: [
         details: [ "Joe Red", "Job Title", "Organisation Unit" ],
         data: { recipients: 20, confirmed: 10, unavailable: 2, viewed: 4, unseen: 2, flagged: 1 },
         children: [],
-        subtree: []
+        subtree: [],
+        parent: true
     }
 ]
 ```
@@ -255,6 +258,7 @@ tree: [
 | data     | Object          | Yes      |         | The data fields for the row                                        |
 | children | Array, Boolean  | No       | []      | A nested array of "branch" objects, or true if they can be loaded  |
 | subtree  | Array, Boolean  | No       | True    | A nested array of "subtree" objects, or true if they can be loaded |
+| parent   | Boolean         | No       | False   | Whether there is a parent node available to load                   |
 
 ### Tree Line
 

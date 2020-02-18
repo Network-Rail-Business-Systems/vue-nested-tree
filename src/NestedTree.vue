@@ -12,7 +12,7 @@
                     ></lookup-item>
                     
                     <a v-if="related_is_enabled === true" :href="processed_related_url" target="_blank">
-                        <font-awesome-icon icon="eye" :title="related_text"></font-awesome-icon>
+                        <font-awesome-icon icon="eye" title="View Selection"></font-awesome-icon>
                     </a>                    
                 </div>
                 
@@ -50,7 +50,7 @@
         <table class="table is-striped nested-tree">
             <thead>
                 <tr>
-                    <th v-if="upward_traversal_is_enabled === true" class="is-narrow is-interactive has-text-primary" @click="loadParent">
+                    <th @click="loadParent" :class="upward_traversal_button_classes">
                         <font-awesome-icon
                             :icon="upward_traversal_icon"
                             :pulse="is_loading_parent === true"
@@ -135,6 +135,7 @@
                             :key="row.id"
                             :row_data="row"
                             :columns="columns"
+                            :filter_id="filter_id"
                             :groups="groups"
                             :tree_width="details_width"
                             :is_grouped="is_grouped"
@@ -167,6 +168,7 @@
     import percenting_is_enabled from "./mixins/computed/percenting_is_enabled";
     import percentage_of from "./mixins/props/percentage_of";
     import LookupItem from "./components/LookupItem/LookupItem";
+    import prepareUrl from './mixins/methods/PrepareUrl.js';
 
     export default {
         name: 'nested-tree',
@@ -187,7 +189,8 @@
             subtree_url,
             subtree_is_enabled,
             traverse_down_url,
-            NodeProcessing
+            NodeProcessing,
+            prepareUrl
         ],
         
         data: function ()
@@ -325,6 +328,14 @@
                 return this.columns.length;
             },
             
+            upward_traversal_button_classes: function ()
+            {
+                if (this.can_traverse_upward === true) {
+                    return 'is-narrow is-interactive has-text-primary';
+                }
+                
+                return 'is-narrow has-text-grey-lighter';
+            },
             upward_traversal_is_enabled: function ()
             {
                 return this.traverse_up_url !== null;
@@ -360,9 +371,13 @@
                     return '';
                 }
                 
-                return this.download_url.replace('%id', this.displayed_tree[0].id);
+                return this.prepareUrl(this.download_url, this.top_node.id, this.filter_id);
             },
             
+            can_traverse_upward: function ()
+            {
+                return this.upward_traversal_is_enabled === true && this.top_node.parent === true;
+            },
             has_load_parent_error: function ()
             {
                 return this.load_parent_error !== null;
@@ -395,10 +410,6 @@
                 }
                 
                 return false;
-            },
-            related_text: function ()
-            {
-                return 'View ' + this.filter_term;
             },
             processed_related_url: function ()
             {
@@ -541,12 +552,11 @@
             
             loadParent: function ()
             {
-                if (this.is_loading_parent === true) {
+                if (this.is_loading_parent === true || this.can_traverse_upward === false) {
                     return;
                 }
                 
-                let url = this.traverse_up_url.replace('%id', this.top_node.id);
-                
+                let url = this.prepareUrl(this.traverse_up_url, this.top_node.id, this.filter_id);
                 this.is_loading_parent = true;
                 this.load_parent_error = null;
                 
@@ -680,13 +690,7 @@
                 this.is_loading_tree = true;
                 this.load_tree_error = null;
                 
-                let url = this.filter_load_url.replace('%id', this.top_node.id);
-                
-                if (this.filter_id !== null) {
-                    url = url.replace('%filter', this.filter_id);
-                } else {
-                    url = url.replace('/%filter', '');
-                }
+                let url = this.prepareUrl(this.filter_load_url, this.top_node.id, this.filter_id);
                 
                 axios.get(url)
                     .then(this.loadTreeSuccess)
@@ -695,9 +699,13 @@
             },
             loadTreeSuccess: function (response)
             {
-                if (response.data === '' || response.data.length < 1) {
+                if (response.data === '') {
                     this.loadTreeFailure();
                     return;
+                }
+
+                if (Array.isArray(response.data) === false) {
+                    response.data = [ response.data ];
                 }
                 
                 this.processed_tree = this.createProcessedTree(response.data);

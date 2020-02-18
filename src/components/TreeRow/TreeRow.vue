@@ -66,6 +66,7 @@
     import percenting_is_enabled from "../../mixins/computed/percenting_is_enabled";
     import grouping_is_enabled from "../../mixins/computed/grouping_is_enabled";
     import percentage_of from "../../mixins/props/percentage_of";
+    import prepareUrl from '../../mixins/methods/PrepareUrl.js';
     
     export default {
         name: 'tree-row',
@@ -86,7 +87,8 @@
             subtree_is_enabled,
             traverse_down_url,
             tree_width,
-            NodeProcessing
+            NodeProcessing,
+            prepareUrl
         ],
         
         data: function ()
@@ -119,6 +121,10 @@
                     'levels',
                     'lines'
                 ])
+            },
+            filter_id: {
+                type: Number|String,
+                default: null
             }
         },
         
@@ -170,9 +176,7 @@
              */
             details_span: function()
             {
-                let span = this.tree_width - this.row_data.depth - 2;
-                
-                return span;
+                return this.tree_width - this.row_data.depth - 2;
             },
             
             expand_children_classes: function ()
@@ -248,7 +252,7 @@
             },
             loadChildren: function ()
             {
-                let url = this.traverse_down_url.replace('%id', this.row_data.id);
+                let url = this.prepareUrl(this.traverse_down_url, this.row_data.id, this.filter_id);
                 
                 this.is_loading_children = true;
                 this.clearErrorMessage();
@@ -290,7 +294,7 @@
             },
             loadSubtree: function ()
             {
-                let url = this.subtree_url.replace('%id', this.row_data.id);
+                let url = this.prepareUrl(this.subtree_url, this.row_data.id, this.filter_id);
                 
                 this.is_loading_subtree = true;
                 this.clearErrorMessage();

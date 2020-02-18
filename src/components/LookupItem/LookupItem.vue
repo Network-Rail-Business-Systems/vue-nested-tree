@@ -153,9 +153,13 @@
             {
                 this.is_active = true;
             },
-            deactivateLookup: function ()
+            deactivateLookup: function (now = false)
             {
-                window.setTimeout(this.deactivateLookupAfterInterval, 100);
+                if (now === true) {
+                    this.deactivateLookupAfterInterval();
+                } else {
+                    window.setTimeout(this.deactivateLookupAfterInterval, 110);
+                }
             },
             deactivateLookupAfterInterval: function ()
             {
@@ -173,8 +177,9 @@
             },
             selectItem: function (item)
             {
-                this.deactivateLookup();
+                this.deactivateLookup(true);
                 this.item_selected = item;
+                this.search_term = item.details[0];
                 this.$emit('selected', item);
             },
             itemDetailClasses: function (index)
@@ -248,6 +253,10 @@
         watch: {
             search_term: function ()
             {
+                if (this.is_active === false) {
+                    return;
+                }
+                
                 this.has_searched = false;
                 this.items_found = [];
                 
