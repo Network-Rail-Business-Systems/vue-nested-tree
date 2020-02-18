@@ -204,7 +204,7 @@
                 is_loading_tree: false,
                 load_parent_error: null,
                 load_tree_error: null,
-                filter_id: null
+                filter_id: this.filter_initial_id
             }
         },
         
@@ -215,6 +215,10 @@
                 validator: isNotBlank()
             },
             
+            filter_initial_id: {
+                type: String|Number,
+                default: null
+            },
             filter_initial_term: {
                 type: String,
                 default: ''
