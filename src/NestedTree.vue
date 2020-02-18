@@ -38,7 +38,7 @@
                 </div>
                 
                 <div v-if="show_download_button === true" class="level-item">
-                    <div @click="downloadCsv">
+                    <div @click="downloadCsv" class="has-text-primary is-interactive">
                         <font-awesome-icon icon="download" title="Download"></font-awesome-icon>
                     </div>
                 </div>
