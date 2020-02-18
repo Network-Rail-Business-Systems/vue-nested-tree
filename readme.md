@@ -46,6 +46,8 @@ This component has a `<table>` element at its base, wrapped in a Bulma `table-co
 
 It is recommended to place the Nested Tree with minimal content to the left or right, as nested data can become quite wide when fully expanded.
 
+A download button is provided that will export the `displayed_tree` as a CSV file.
+
 #### Slots
 
 | Name         | Wrapper        | Location                              |
@@ -58,7 +60,7 @@ It is recommended to place the Nested Tree with minimal content to the left or r
 | Name                | Type    | Required | Default | Sync | Validation      |
 | ------------------- | ------- | -------- | ------- | ---- | --------------- |
 | columns             | Array   | Yes      |         | No   | objectsHaveKeys |
-| download_url        | String  | No       | null    | No   | isNotBlank      |
+| csv_details_fields  | Array   | Yes      |         | No   |                 |
 | filter_initial_term | String  | No       |         | No   |                 |
 | filter_load_url     | String  | No       |         | No   | isNotBlank      |
 | filter_search_url   | String  | No       |         | No   | isNotBlank      |
@@ -97,11 +99,17 @@ An array of objects is used to display fields held within the `data` prop while 
 | field   | String  | No       | *name*  | The matching `data` field; equal to lowercase `name` if blank |
 | percent | Boolean | No       | true    | Whether the column should be shown as a percent, if enabled   |
 
-##### download_url
+##### csv_details_fields
 
-An endpoint where a downloadable version of the shown tree is available.
+Which titles to give each tree node's `details` property when displayed on the CSV download.
 
-The request will include the ID of the topmost root node to use as a starting point for the response. Include a `%filter` placeholder if you wish to use filtering.
+```
+csv_details_fields = [
+    "Name",             // details[0]
+    "Job Title",        // details[1]
+    "Organisation"      // details[2]
+]
+```
 
 ##### filter_url
 

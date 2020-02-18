@@ -38,9 +38,9 @@
                 </div>
                 
                 <div v-if="show_download_button === true" class="level-item">
-                    <a :href="processed_download_url" target="_blank">
+                    <div @click="downloadCsv">
                         <font-awesome-icon icon="download" title="Download"></font-awesome-icon>
-                    </a>
+                    </div>
                 </div>
                 
                 <slot name="header-right"></slot>
@@ -166,9 +166,10 @@
     import grouping_is_enabled from "./mixins/computed/grouping_is_enabled";
     import subtree_is_enabled from "./mixins/computed/subtree_is_enabled";
     import percenting_is_enabled from "./mixins/computed/percenting_is_enabled";
-    import percentage_of from "./mixins/props/percentage_of";
+    import percentage_of from './mixins/props/percentage_of';
     import LookupItem from "./components/LookupItem/LookupItem";
     import prepareUrl from './mixins/methods/PrepareUrl.js';
+    import CsvProcessing from './mixins/methods/CsvProcessing.js';
 
     export default {
         name: 'nested-tree',
@@ -190,7 +191,8 @@
             subtree_is_enabled,
             traverse_down_url,
             NodeProcessing,
-            prepareUrl
+            prepareUrl,
+            CsvProcessing
         ],
         
         data: function ()
@@ -209,10 +211,9 @@
         },
         
         props: {
-            download_url: {
-                type: String,
-                default: null,
-                validator: isNotBlank()
+            csv_details_fields: {
+                type: Array,
+                required: true
             },
             
             filter_initial_id: {
@@ -363,19 +364,7 @@
             
             show_download_button: function ()
             {
-                if (this.tree_is_empty === true) {
-                    return false;
-                }
-                
-                return this.download_url !== null;
-            },
-            processed_download_url: function ()
-            {
-                if (this.tree_is_empty === true || this.top_node === null) {
-                    return '';
-                }
-                
-                return this.prepareUrl(this.download_url, this.top_node.id, this.filter_id);
+                return this.tree_is_empty === false;
             },
             
             can_traverse_upward: function ()

@@ -18,13 +18,15 @@
                         { name: "Unseen", field: "unseen", icon: "eye-slash" },
                         { name: "Flagged", field: "flagged", icon: "flag", percent: false }
                     ]'
-                    download_url="potato/download/%id/%filter"
-                    
+                    :csv_details_fields='[
+                        "Team Leader",
+                        "Job Title",
+                        "Organisation Unit"
+                    ]'
                     filter_initial_term="Potatochan"
                     filter_search_url="potato/search"
                     filter_load_url="endpoint/filter/%id/%filter"
                     filter_placeholder="Find a briefing..."
-                    
                     :groups='[
                         { name: "Recipients", field: "recipients", icon: "user", fields: ["recipients"] },
                         { name: "Confirmed", field: "confirmed", icon: "check", fields: ["confirmed", "unavailable"] },
