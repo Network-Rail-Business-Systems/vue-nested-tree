@@ -284,7 +284,6 @@
                     }
                 }
                 
-                this.$emit('updated', displayedTree);
                 return displayedTree;
             },
             tree_is_empty: function ()
@@ -728,6 +727,10 @@
             tree: function ()
             {
                 this.processed_tree = this.createProcessedTree(this.tree);
+            },
+            displayed_tree: function ()
+            {
+                this.$emit('updated', this.displayed_tree);
             }
         }
     }
