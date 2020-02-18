@@ -33,7 +33,7 @@ export default {
                 node.levels = level;
             }
 
-            if (node.parent !== null) {
+            if (typeof node.parent === 'object') {
                 this.updateLevels(node.parent, lowestDepth);
             }
         },
@@ -51,6 +51,8 @@ export default {
             if (parent !== null) {
                 depth = parent.depth + 1;
                 this.updateLevels(parent, depth);
+            } else {
+                parent = sourceData.parent === true;
             }
             
             let node = {
@@ -65,7 +67,7 @@ export default {
 
                 children: {
                     available: sourceData.children === true,
-                    expanded: parent === null,
+                    expanded: typeof parent !== 'object',
                     loaded: Array.isArray(sourceData.children) === true,
                     contents: []
                 },

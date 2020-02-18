@@ -492,7 +492,7 @@
                 let line;
                 let armIndex = node.depth - 1;
                 
-                if (node.parent !== null) {
+                if (typeof node.parent === 'object') {
                     for (let index in node.parent.lines) {
                         switch (node.parent.lines[index]) {
                             case 'tee-right':
@@ -533,7 +533,7 @@
              */
             nodeIsVisible: function (treeNode)
             {
-                if (treeNode.parent === null) {
+                if (typeof treeNode.parent !== 'object') {
                     return true;
                 }
                 
