@@ -634,10 +634,10 @@
                 return lowestDepth;
             },
             
-            selectFilter: function (event)
+            selectFilter: function (item)
             {
-                console.log("Filter selected", event);
-                this.filter_id = event.target.value;
+                console.log("Filter selected", item);
+                this.filter_id = item.id;
                 
                 // Send request to endpoint with topmost node ID and selected ID
             },
