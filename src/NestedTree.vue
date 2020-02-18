@@ -284,6 +284,7 @@
                     }
                 }
                 
+                this.$emit('updated', displayedTree);
                 return displayedTree;
             },
             tree_is_empty: function ()

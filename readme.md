@@ -268,6 +268,12 @@ tree: [
 | subtree  | Array, Boolean  | No       | True    | A nested array of "subtree" objects, or true if they can be loaded |
 | parent   | Boolean         | No       | False   | Whether there is a parent node available to load                   |
 
+#### Events
+
+| Name    | Trigger                        | Value          |
+| ------- | ------------------------------ | -------------- |
+| updated | The displayed tree has changed | displayed_tree |
+
 ### Tree Line
 
 To create sharp lines that can adjust its crossbars based on the height of each table row, TreeLine uses DIVs positioned within a cell.
