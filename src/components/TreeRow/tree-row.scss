@@ -1,0 +1,7 @@
+tr.tree-row {
+    & > td {
+        &.expanded {
+            border-bottom-style: none;
+        }
+    }
+}

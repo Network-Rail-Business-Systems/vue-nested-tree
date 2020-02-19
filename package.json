@@ -1,24 +1,27 @@
 {
-  "name": "vue-nested-tree",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "test:unit": "vue-cli-service test:unit"
-  },
-  "dependencies": {
-    "core-js": "^3.4.4",
-    "vue": "^2.6.10"
-  },
-  "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.1.0",
-    "@vue/cli-plugin-unit-mocha": "^4.1.0",
-    "@vue/cli-service": "^4.1.0",
-    "@vue/test-utils": "1.0.0-beta.29",
-    "chai": "^4.1.2",
-    "node-sass": "^4.12.0",
-    "sass-loader": "^8.0.0",
-    "vue-template-compiler": "^2.6.10"
-  }
+    "name": "vue-nested-tree",
+    "version": "0.1.0",
+    "main": "src/NestedTree.vue",
+    "private": true,
+    "scripts": {
+        "serve": "vue-cli-service serve",
+        "build": "vue-cli-service build"
+    },
+    "dependencies": {
+        "@fortawesome/fontawesome-svg-core": "^1.2.26",
+        "@fortawesome/free-solid-svg-icons": "^5.12.0",
+        "@fortawesome/vue-fontawesome": "^0.1.9",
+        "axios": "^0.19.2",
+        "bulma": "^0.8.0",
+        "core-js": "^3.4.4",
+        "vue": "^2.6.10"
+    },
+    "devDependencies": {
+        "@vue/cli-plugin-babel": "^4.1.0",
+        "@vue/cli-service": "^4.1.0",
+        "@vue/test-utils": "1.0.0-beta.29",
+        "node-sass": "^4.12.0",
+        "sass-loader": "^8.0.0",
+        "vue-template-compiler": "^2.6.10"
+    }
 }

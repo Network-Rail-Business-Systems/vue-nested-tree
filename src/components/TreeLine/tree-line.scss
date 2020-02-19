@@ -1,0 +1,82 @@
+$tree-line-thickness: 3px;
+$tree-line-edge-gap: 0.5px;
+$tree-line-style: dotted;
+$tree-line-color: #888888;
+
+$tree-line-full-size: calc(100% - #{$tree-line-edge-gap * 2});
+$tree-line-half-size: calc(50% - #{$tree-line-edge-gap * 2});
+
+td.tree-line {
+    position: relative;
+    padding: 0;
+
+    border-style: none;
+    
+    &.up {
+        border-top-style: none;
+    }
+
+    &.right {
+        border-right-style: none;
+    }
+    
+    &.down {
+        border-bottom-style: none;
+    }
+    
+    &.left {
+        border-left-style: none;
+    }
+    
+    & > div {
+        position: absolute;
+
+        &.horizontal {
+            top: $tree-line-edge-gap;
+            height: $tree-line-half-size;
+
+            border-bottom-style: $tree-line-style;
+            border-bottom-width: $tree-line-thickness;
+            border-bottom-color: $tree-line-color;
+
+            &.full-width {
+                left: $tree-line-edge-gap;
+                width: $tree-line-full-size;
+            }
+
+            &.left-only {
+                left: $tree-line-edge-gap;
+                width: $tree-line-half-size;
+            }
+
+            &.right-only {
+                right: $tree-line-edge-gap;
+                width: $tree-line-half-size;
+            }
+        }
+
+        &.vertical {
+            left: $tree-line-edge-gap;
+            width: $tree-line-half-size;
+
+            border-right-style: $tree-line-style;
+            border-right-width: $tree-line-thickness;
+            border-right-color: $tree-line-color;
+
+            &.full-height {
+                top: $tree-line-edge-gap;
+                height: $tree-line-full-size;
+            }
+
+            &.up-only {
+                top: $tree-line-edge-gap;
+                height: $tree-line-half-size;
+            }
+
+            &.down-only {
+                bottom: $tree-line-edge-gap;
+                height: $tree-line-half-size;
+            }
+        }
+    }
+}

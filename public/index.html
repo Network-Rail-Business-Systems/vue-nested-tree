@@ -1,17 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title>vue-nested-tree</title>
-  </head>
-  <body>
-    <noscript>
-      <strong>We're sorry but vue-nested-tree doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
-  </body>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <title>vue-nested-tree</title>
+    </head>
+    
+    <body>
+        <section class="section">
+            <div id="app">
+                <nested-tree
+                    :columns='[
+                        { name: "Recipients", field: "recipients", icon: "user" },
+                        { name: "Confirmed", field: "confirmed", icon: "check" },
+                        { name: "Unavailable", field: "unavailable", icon: "question" },
+                        { name: "Viewed", field: "viewed", icon: "eye" },
+                        { name: "Unseen", field: "unseen", icon: "eye-slash" },
+                        { name: "Flagged", field: "flagged", icon: "flag", percent: false }
+                    ]'
+                    :csv_details_fields='[
+                        "Team Leader",
+                        "Job Title",
+                        "Organisation Unit"
+                    ]'
+                    filter_initial_term="Potatochan"
+                    filter_search_url="potato/search"
+                    filter_load_url="endpoint/filter/%id/%filter"
+                    filter_placeholder="Find a briefing..."
+                    :groups='[
+                        { name: "Recipients", field: "recipients", icon: "user", fields: ["recipients"] },
+                        { name: "Confirmed", field: "confirmed", icon: "check", fields: ["confirmed", "unavailable"] },
+                        { name: "Unconfirmed", field: "unconfirmed", icon: "question", fields: ["viewed", "unseen", "flagged"] },
+                        { name: "Flagged", field: "flagged", icon: "flag", fields: ["flagged"], percent: false }
+                    ]'
+                    percentage_of="recipients"
+                    related_url="potato/related/%id"
+                    start_grouped
+                    start_percented
+                    subtree_url="subtree/%id/%filter"
+                    title="Team Leader"
+                    traverse_down_url="traverse-down/%id/%filter"
+                    traverse_up_url="traverse-up/%id/%filter"
+                    :tree='[
+                        {
+                            id: 1,
+                            details: ["Joe Red", "Job Title", "Organisation Unit"],
+                            data: { recipients: 20, confirmed: 12, unavailable: 2, viewed: 2, unseen: 3, flagged: 1 },
+                            children: [
+                                {
+                                    id: 2,
+                                    details: ["Savannah Blue", "Job Title", "Organisation Unit"],
+                                    data: { recipients: 20, confirmed: 10, unavailable: 5, viewed: 2, unseen: 1, flagged: 2 },
+                                    children: [
+                                        {
+                                            id: 4,
+                                            details: ["Chemical Brother", "Job Title", "Organisation Unit"],
+                                            data: { recipients: 20, confirmed: 13, unavailable: 2, viewed: 2, unseen: 2, flagged: 1 },
+                                            children: [
+                                                {
+                                                    id: 6,
+                                                    details: ["Razzamatazz", "Job Title", "Organisation Unit"],
+                                                    data: { recipients: 20, confirmed: 13, unavailable: 2, viewed: 2, unseen: 2, flagged: 1 },
+                                                    children: [
+                                                        {
+                                                            id: 7,
+                                                            details: ["Happenstance", "Job Title", "Organisation Unit"],
+                                                            data: { recipients: 20, confirmed: 13, unavailable: 2, viewed: 2, unseen: 2, flagged: 1 },
+                                                            children: [],
+                                                            subtree: [
+                                                                { id: 20, details: ["Subtree Child", "Gabba", "Hey"], data: { recipients: 6, confirmed: 2, unavailable: 1, viewed: 1, unseen: 1, flagged: 1 }}
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            subtree: false
+                                        },
+                                        {
+                                            id: 5,
+                                            details: ["Other Chemical Brother", "Job Title", "Organisation Unit"],
+                                            data: { recipients: 20, confirmed: 10, unavailable: 2, viewed: 2, unseen: 5, flagged: 1 },
+                                            children: [
+                                                {
+                                                    id: 8,
+                                                    details: ["Cheese Pizza", "Job Title", "Organisation Unit"],
+                                                    data: { recipients: 20, confirmed: 13, unavailable: 2, viewed: 2, unseen: 2, flagged: 1 },
+                                                    children: [
+                                                        {
+                                                            id: 9,
+                                                            details: ["Have a Banana", "Job Title", "Organisation Unit"],
+                                                            data: { recipients: 20, confirmed: 13, unavailable: 2, viewed: 2, unseen: 2, flagged: 1 },
+                                                            children: [
+                                                                {
+                                                                    id: 10,
+                                                                    details: ["Dissonance is Life", "Job Title", "Organisation Unit"],
+                                                                    data: { recipients: 20, confirmed: 13, unavailable: 2, viewed: 2, unseen: 2, flagged: 1 },
+                                                                    children: []
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    id: 3,
+                                    details: ["Has no children", "Job Title", "Organisation Unit"],
+                                    data: { recipients: 20, confirmed: 10, unavailable: 5, viewed: 2, unseen: 2, flagged: 1 },
+                                    children: []
+                                },
+                                {
+                                    id: 11,
+                                    details: ["Has Loadable Children", "Does not bring them along", "Until needed"],
+                                    data: { recipients: 20, confirmed: 13, unavailable: 2, viewed: 2, unseen: 2, flagged: 1 },
+                                    children: true
+                                },
+                                {
+                                    id: 12,
+                                    details: ["Does not have loadable children", "Does not bring them along", "Ever"],
+                                    data: { recipients: 20, confirmed: 13, unavailable: 2, viewed: 2, unseen: 2, flagged: 1 },
+                                    children: false
+                                },
+                                {
+                                    id: 13,
+                                    details: ["Has Subtree", "Gabba", "Hey"],
+                                    data: { recipients: 20, confirmed: 13, unavailable: 2, viewed: 2, unseen: 2, flagged: 1 },
+                                    children: [],
+                                    subtree: [
+                                        { id: 17, details: ["Subtree Child", "Gabba", "Hey"], data: { recipients: 6, confirmed: 2, unavailable: 1, viewed: 1, unseen: 1, flagged: 1 }},
+                                        { id: 18, details: ["Subtree Child", "Gabba", "Hey"], data: { recipients: 6, confirmed: 2, unavailable: 1, viewed: 1, unseen: 1, flagged: 1 }},
+                                        { id: 19, details: ["Subtree Child", "Gabba", "Hey"], data: { recipients: 6, confirmed: 2, unavailable: 1, viewed: 1, unseen: 1, flagged: 1 }}
+                                    ]
+                                },
+                                {
+                                    id: 14,
+                                    details: ["Has No Subtree", "Gabba", "Hey"],
+                                    data: { recipients: 20, confirmed: 13, unavailable: 2, viewed: 2, unseen: 2, flagged: 1 },
+                                    children: [],
+                                    subtree: []
+                                },
+                                {
+                                    id: 15,
+                                    details: ["Has Loadable Subtree", "Gabba", "Hey"],
+                                    data: { recipients: 20, confirmed: 13, unavailable: 2, viewed: 2, unseen: 2, flagged: 1 },
+                                    children: [],
+                                    subtree: true
+                                },
+                                {
+                                    id: 16,
+                                    details: ["Does not have a loadable Subtree", "Gabba", "Hey"],
+                                    data: { recipients: 20, confirmed: 13, unavailable: 2, viewed: 2, unseen: 2, flagged: 1 },
+                                    children: [],
+                                    subtree: false
+                                }
+                            ]
+                        }
+                    ]'
+                ></nested-tree>
+            </div>
+        </section>
+    </body>
 </html>

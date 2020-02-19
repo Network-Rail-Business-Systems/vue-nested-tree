@@ -1,0 +1,56 @@
+label.toggle-button {
+    position: relative;
+    display: flex;
+
+    align-items: center;
+
+    cursor: pointer;
+
+    & > div {
+        margin-right: 0.5em;
+    }
+
+    & > input {
+        display: none;
+
+        &:checked + span {
+            background-color: $primary;
+
+            &:before {
+                left: 1.05em;
+                background-color: $white;
+            }
+        }
+    }
+
+    & > span {
+        position: relative;
+        display: inline-block;
+
+        height: 1em;
+        width: 2em;
+
+        top: 0;
+        left: 0;
+
+        border-radius: 0.5em;
+
+        background-color: $grey-lighter;
+
+        &:before {
+            position: absolute;
+
+            content: "";
+
+            height: 0.8em;
+            width: 0.8em;
+
+            top: 0.1em;
+            left: 0.15em;
+
+            border-radius: 0.5em;
+            background-color: $primary;
+            transition: left 0.25s ease-out;
+        }
+    }
+}

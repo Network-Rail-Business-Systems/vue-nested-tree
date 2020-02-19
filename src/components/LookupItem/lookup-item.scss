@@ -1,0 +1,32 @@
+div.lookup-item {
+    & div.control {
+        &.has-icons-right {
+            & > span.is-interactive {
+                cursor: pointer;
+                pointer-events: all;
+            } 
+        }
+    }
+    
+    & > div.dropdown-menu {
+        & > div.dropdown-content {
+            max-height: 13rem;
+            overflow-y: auto;
+
+            & > div.dropdown-item {
+                cursor: pointer;
+
+                &:hover {
+                    background-color: #f5f5f5;
+                    color: #000000;
+                }
+
+                & > div.level {
+                    & > p.level-item {
+                        flex-shrink: 1;
+                    }
+                }
+            }
+        }
+    }
+}
