@@ -23,7 +23,7 @@
                         @click="clearSelection"
                         class="icon is-right has-text-primary is-interactive"
                     >
-                        <font-awesome-icon icon="times"></font-awesome-icon>
+                        <font-awesome-icon icon="times" title="Clear Search Term"></font-awesome-icon>
                     </span>
                 </div>
             </div>

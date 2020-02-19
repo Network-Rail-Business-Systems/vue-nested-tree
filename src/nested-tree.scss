@@ -10,6 +10,10 @@ div.lookup-item {
     }
 }
 
+.is-interactive {
+    cursor: pointer;
+}
+
 table.nested-tree {
     & td {
         vertical-align: middle;
@@ -25,10 +29,6 @@ table.nested-tree {
         & > svg.inline-icon {
             margin-right: 0.5em;
         }
-    }
-    
-    & .is-interactive {
-        cursor: pointer;
     }
     
     & td,

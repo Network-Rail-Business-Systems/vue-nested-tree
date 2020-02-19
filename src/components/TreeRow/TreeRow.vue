@@ -5,15 +5,29 @@
         </template>
         
         <td v-if="has_children === true" :class="expand_children_classes" @click="toggleExpandChildren">
-            <font-awesome-icon :icon="expand_children_icon" :pulse="is_loading_children" size="lg"></font-awesome-icon>
+            <font-awesome-icon
+                :icon="expand_children_icon"
+                :pulse="is_loading_children"
+                size="lg"
+                :title="expand_children_text"
+            ></font-awesome-icon>
         </td>
         <tree-line v-else direction="straight-horizontal"></tree-line>
         
         <td v-if="has_subtree === true" :class="expand_subtree_classes" @click="toggleExpandSubtree">
-            <font-awesome-icon :icon="expand_subtree_icon" :pulse="is_loading_subtree" size="lg"></font-awesome-icon>
+            <font-awesome-icon
+                :icon="expand_subtree_icon"
+                :pulse="is_loading_subtree"
+                size="lg"
+                :title="expand_subtree_text"
+            ></font-awesome-icon>
         </td>
         <td v-else class="is-narrow has-text-grey-lighter">
-            <font-awesome-icon :icon="expand_subtree_icon" size="lg"></font-awesome-icon>
+            <font-awesome-icon 
+                :icon="expand_subtree_icon"
+                size="lg"
+                :title="expand_subtree_text"
+            ></font-awesome-icon>
         </td>
         
         <td :colspan="details_span">
@@ -67,6 +81,8 @@
     import grouping_is_enabled from "../../mixins/computed/grouping_is_enabled";
     import percentage_of from "../../mixins/props/percentage_of";
     import prepareUrl from '../../mixins/methods/PrepareUrl.js';
+    import children_term from "../../mixins/props/children_term";
+    import subtree_term from "../../mixins/props/subtree_term";
     
     export default {
         name: 'tree-row',
@@ -88,7 +104,9 @@
             traverse_down_url,
             tree_width,
             NodeProcessing,
-            prepareUrl
+            prepareUrl,
+            children_term,
+            subtree_term
         ],
         
         data: function ()
@@ -199,6 +217,14 @@
                 
                 return 'plus';
             },
+            expand_children_text: function ()
+            {
+                if (this.row_data.children.expanded === true) {
+                    return 'Hide ' + this.children_term;
+                }
+                
+                return 'Show ' + this.children_term;
+            },
             
             expand_subtree_classes: function ()
             {
@@ -225,6 +251,14 @@
                 }
 
                 return 'angle-right';
+            },
+            expand_subtree_text: function ()
+            {
+                if (this.row_data.subtree.expanded === true) {
+                    return 'Hide ' + this.subtree_term;
+                }
+                
+                return 'Show ' + this.subtree_term;
             }
         },
         

@@ -143,6 +143,8 @@
                             :percentage_of="percentage_of"
                             :subtree_url="subtree_url"
                             :traverse_down_url="traverse_down_url"
+                            :children_term="children_term"
+                            :subtree_term="subtree_term"
                         ></tree-row>
                     </template>
                 </template>
@@ -170,6 +172,8 @@
     import LookupItem from "./components/LookupItem/LookupItem";
     import prepareUrl from './mixins/methods/PrepareUrl.js';
     import CsvProcessing from './mixins/methods/CsvProcessing.js';
+    import children_term from "./mixins/props/children_term";
+    import subtree_term from "./mixins/props/subtree_term";
 
     export default {
         name: 'nested-tree',
@@ -192,7 +196,9 @@
             traverse_down_url,
             NodeProcessing,
             prepareUrl,
-            CsvProcessing
+            CsvProcessing,
+            children_term,
+            subtree_term
         ],
         
         data: function ()
