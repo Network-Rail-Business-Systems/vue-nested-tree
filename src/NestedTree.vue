@@ -489,6 +489,7 @@
             calculatePassthroughLines: function (node, hasSiblingAfter = false, isSubtree = false)
             {
                 let line;
+                let lines = [];
                 let armIndex = node.depth - 1;
                 
                 if (typeof node.parent === 'object') {
@@ -496,11 +497,11 @@
                         switch (node.parent.lines[index]) {
                             case 'tee-right':
                             case 'straight-vertical':
-                                node.lines[index] = 'straight-vertical';
+                                lines[index] = 'straight-vertical';
                                 break;
 
                             default:
-                                node.lines[index] = 'none';
+                                lines[index] = 'none';
                         }
                     }
 
@@ -511,7 +512,7 @@
                             line = 'none';
                         }
                         
-                        node.lines[armIndex] = line;
+                        lines[armIndex] = line;
                         armIndex++;
                     }
                     
@@ -521,8 +522,10 @@
                         line = 'elbow-up-right';
                     }
 
-                    node.lines[armIndex] = line;
+                    lines[armIndex] = line;
                 }
+                
+                this.$set(node, 'lines', lines);
             },
             
             /**
