@@ -614,7 +614,7 @@
                 
                 nodeToJoin.parent = targetNode;
                 
-                targetNode.children.contents.splice(index, 1);
+                targetNode.children.contents.splice(targetAddress[targetAddress.length - 1], 1);
                 targetNode.children.contents.push(nodeToJoin);
                 this.recalculateTreeDepthAndLevels(parentTree, 0);
             },
