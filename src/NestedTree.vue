@@ -121,7 +121,7 @@
                     <template v-for="row in displayed_tree">
                         <subtree-row
                             v-if="row.type === 'subtree'"
-                            :key="row.id"
+                            :key="row.uid"
                             :row_data="row"
                             :columns="columns"
                             :groups="groups"
@@ -132,7 +132,7 @@
                         
                         <tree-row
                             v-else
-                            :key="row.id"
+                            :key="row.uid"
                             :row_data="row"
                             :columns="columns"
                             :filter_id="filter_id"

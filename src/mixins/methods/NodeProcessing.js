@@ -1,4 +1,10 @@
+import uid from './Uid';
+
 export default {
+    mixins: [
+        uid
+    ],
+    
     methods: {
         /**
          * Recursively creates tree nodes from a source tree
@@ -56,6 +62,7 @@ export default {
             }
             
             let node = {
+                uid: this.uid(),
                 type: 'tree',
                 parent: parent,
 
@@ -124,6 +131,7 @@ export default {
             let percents = this.percentData(subtreeRow.data, groups);
 
             return {
+                uid: this.uid(),
                 type: 'subtree',
                 parent: parent,
 
