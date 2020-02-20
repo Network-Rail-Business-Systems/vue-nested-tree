@@ -41,13 +41,13 @@
             {
                 switch (this.direction) {
                     case "cap-up":
-                        return this.makeDirections(true);
+                        return this.makeDirections(true, false, false, false);
                         
                     case "cap-down":
-                        return this.makeDirections(false, true);
+                        return this.makeDirections(false, true, false, false);
                         
                     case "cap-left":
-                        return this.makeDirections(false, false, true);
+                        return this.makeDirections(false, false, true, false);
                         
                     case "cap-right":
                         return this.makeDirections(false, false, false, true);
@@ -68,7 +68,7 @@
                         return this.makeDirections(false, true, false, true);
                         
                     case "straight-vertical":
-                        return this.makeDirections(true, true);
+                        return this.makeDirections(true, true, false, false);
                         
                     case "straight-horizontal":
                         return this.makeDirections(false, false, true, true);
@@ -80,13 +80,13 @@
                         return this.makeDirections(false, true, true, true);
                         
                     case "tee-left":
-                        return this.makeDirections(true, true, true);
+                        return this.makeDirections(true, true, true, false);
                         
                     case "tee-right":
                         return this.makeDirections(true, true, false, true);
 
                     default:
-                        return this.makeDirections();
+                        return this.makeDirections(false, false, false, false);
                 }
             },
             
@@ -148,7 +148,7 @@
         },
         
         methods: {
-            makeDirections: function (up = false, down = false, left = false, right = false)
+            makeDirections: function (up, down, left, right)
             {
                 return { up: up, down: down, left: left, right: right }
             }

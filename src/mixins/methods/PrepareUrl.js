@@ -1,6 +1,6 @@
 export default {
     methods: {
-        prepareUrl: function (sourceUrl, nodeId, filterId = null)
+        prepareUrl: function (sourceUrl, nodeId, filterId)
         {
             let preparedUrl = sourceUrl.replace('%id', nodeId);
             
