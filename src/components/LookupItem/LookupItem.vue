@@ -1,6 +1,6 @@
 <template>
     <div
-        @keydown.esc="deactivateLookup"
+        @keydown.esc="deactivateLookup(false)"
         @focusout="deactivateLookup"
         :class="lookup_classes"
     >
@@ -153,7 +153,7 @@
             {
                 this.is_active = true;
             },
-            deactivateLookup: function (now = false)
+            deactivateLookup: function (now)
             {
                 if (now === true) {
                     this.deactivateLookupAfterInterval();

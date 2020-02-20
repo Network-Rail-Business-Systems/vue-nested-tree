@@ -12,7 +12,7 @@ export default {
          * @param parent Number|Null The parent node
          * @return Object The processed tree
          */
-        processTreeData: function (sourceData, parent = null) {
+        processTreeData: function (sourceData, parent) {
             let treeNode = this.createTreeNode(sourceData, parent);
 
             if (typeof sourceData.children !== 'undefined' && sourceData.children.length > 0) {
@@ -50,7 +50,7 @@ export default {
          * @param parent Number|Null The parent node
          * @returns Object The processed tree node with added fields
          */
-        createTreeNode: function (sourceData, parent = null)
+        createTreeNode: function (sourceData, parent)
         {
             let depth = 0;
             

@@ -284,7 +284,7 @@
                 let displayedTree = [];
                 
                 for (let index in this.processed_tree) {
-                    let visibleNodes = this.filterVisibleNodes(this.processed_tree[index]);
+                    let visibleNodes = this.filterVisibleNodes(this.processed_tree[index], false);
                     if (visibleNodes !== false) {
                         displayedTree = displayedTree.concat(visibleNodes);
                     }
@@ -434,7 +434,7 @@
                 
                 for (let index in sourceTree) {
                     processedTree.push(
-                        this.processTreeData(sourceTree[index])
+                        this.processTreeData(sourceTree[index], null)
                     );
                 }
                 
@@ -448,7 +448,7 @@
              * @param hasSiblingAfter Boolean Whether there a node after this one
              * @return Array|Boolean A flat array of all visible nodes
              */
-            filterVisibleNodes: function (treeNode, hasSiblingAfter = false)
+            filterVisibleNodes: function (treeNode, hasSiblingAfter)
             {
                 let visibleNodes = [];
                 
@@ -456,7 +456,7 @@
                     return false;
                 }
                 
-                this.calculatePassthroughLines(treeNode, hasSiblingAfter);
+                this.calculatePassthroughLines(treeNode, hasSiblingAfter, false);
                 visibleNodes.push(treeNode);
                 
                 // Output subtree nodes
@@ -486,7 +486,7 @@
              * @param hasSiblingAfter Boolean Whether there is a node after this one
              * @param isSubtree Boolean Whether this is a subtree node
              */
-            calculatePassthroughLines: function (node, hasSiblingAfter = false, isSubtree = false)
+            calculatePassthroughLines: function (node, hasSiblingAfter, isSubtree)
             {
                 let line;
                 let lines = [];
@@ -578,7 +578,7 @@
                 }
                 
                 let oldTree = this.processed_tree;
-                let parentTree = this.processTreeData(response.data);
+                let parentTree = this.processTreeData(response.data, null);
                 
                 this.mergeChildTreeWithParent(parentTree, oldTree);
                 this.processed_tree = [parentTree];
