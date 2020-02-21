@@ -127,7 +127,7 @@ export default {
          * Encapsulate strings with quotation marks
          * @param strings Array An array of values
          */
-        encapsulateStrings(strings)
+        encapsulateStrings: function (strings)
         {
             for (let index in strings) {
                 if (typeof strings[index] === 'string') {
