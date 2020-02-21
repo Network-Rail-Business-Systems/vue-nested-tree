@@ -115,12 +115,18 @@ export default {
                 + date.getUTCMinutes() + '-' 
                 + date.getUTCSeconds()
                 + '.csv';
-            let element = document.createElement('a');
             
-            element.href='data:text/csv;charset=utf-8,' + encodeURI(data);
-            element.target = '_blank';
-            element.download = filename;
-            element.click();
+            if (window.navigator.msSaveOrOpenBlob) {
+                let blob = new Blob([data], { type: 'text/csv'});
+                window.navigator.msSaveOrOpenBlob(blob, filename);
+                
+            } else {
+                let element = document.createElement('a');
+                element.href='data:text/csv;charset=utf-8,' + encodeURI(data);
+                element.target = '_blank';
+                element.download = filename;
+                element.click();
+            }
         },
 
         /**
