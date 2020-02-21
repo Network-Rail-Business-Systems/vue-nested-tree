@@ -18,6 +18,7 @@
                         { name: "Unseen", field: "unseen", icon: "eye-slash" },
                         { name: "Flagged", field: "flagged", icon: "flag", percent: false }
                     ]'
+                    csv_filename="bbs-nested-tree-report"
                     :csv_details_fields='[
                         "Team Leader",
                         "Job Title",
@@ -49,7 +50,7 @@
                             children: [
                                 {
                                     id: 2,
-                                    details: ["Savannah Blue", "Job Title", "Organisation Unit"],
+                                    details: ["Savannah Blue", "Job, Ti,tle", "Organisation Unit"],
                                     data: { recipients: 20, confirmed: 10, unavailable: 5, viewed: 2, unseen: 1, flagged: 2 },
                                     children: [
                                         {

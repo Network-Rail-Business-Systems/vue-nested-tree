@@ -31,6 +31,7 @@ export default {
                 headers.push(fields[index].name);
             }
             
+            this.encapsulateStrings(headers);
             return headers.join(',') + '\n';
         },
         
@@ -95,6 +96,7 @@ export default {
                 output.push(data[fields[index].field]);
             }
             
+            this.encapsulateStrings(output);
             return output.join(',');
         },
 
@@ -104,11 +106,34 @@ export default {
          */
         initiateCsvDownload: function (data)
         {
+            let date = new Date();
+            let filename = this.csv_filename + '_' 
+                + date.getUTCFullYear() + '-' 
+                + date.getUTCMonth() + '-' 
+                + date.getUTCDay() + '_'
+                + date.getUTCHours() + '-' 
+                + date.getUTCMinutes() + '-' 
+                + date.getUTCSeconds()
+                + '.csv';
             let element = document.createElement('a');
+            
             element.href='data:text/csv;charset=utf-8,' + encodeURI(data);
             element.target = '_blank';
-            element.download = 'aname.csv';
+            element.download = filename;
             element.click();
+        },
+
+        /**
+         * Encapsulate strings with quotation marks
+         * @param strings Array An array of values
+         */
+        encapsulateStrings(strings)
+        {
+            for (let index in strings) {
+                if (typeof strings[index] === 'string') {
+                    strings[index] = '"' + strings[index] + '"';
+                }
+            }
         }
     }
 }
