@@ -174,7 +174,8 @@
     import CsvProcessing from './mixins/methods/CsvProcessing.js';
     import children_term from "./mixins/props/children_term";
     import subtree_term from "./mixins/props/subtree_term";
-
+    import csv_filename from './mixins/props/csv_filename.js';
+    
     export default {
         name: 'nested-tree',
         components: {
@@ -198,7 +199,8 @@
             prepareUrl,
             CsvProcessing,
             children_term,
-            subtree_term
+            subtree_term,
+            csv_filename
         ],
         
         data: function ()
