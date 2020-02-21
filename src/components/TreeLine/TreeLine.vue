@@ -1,7 +1,9 @@
 <template>
     <td :class="tree_line_classes">
-        <div :class="horizontal_classes"></div>
-        <div :class="vertical_classes"></div>
+        <div>
+            <div :class="horizontal_classes"></div>
+            <div :class="vertical_classes"></div>
+        </div>
     </td>
 </template>
 
