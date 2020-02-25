@@ -233,7 +233,11 @@
                 if (response.data === '') {
                     this.items_found = [];
                 } else {
-                    this.items_found = response.data;
+                    if (typeof response.data.data === 'object') {
+                        this.items_found = response.data.data;
+                    } else {
+                        this.items_found = response.data;
+                    }
                 }
             },
             lookupFailure: function (error)
