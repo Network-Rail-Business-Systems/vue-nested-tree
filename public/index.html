@@ -41,60 +41,18 @@
                     subtree_url="subtree/%id/%filter"
                     title="Team Leader"
                     traverse_down_url="traverse-down/%id/%filter"
-                    traverse_up_url="traverse-up/%id/%filter"
                     :tree='[
                         {
                             id: 1,
                             details: ["Joe Red", "Job Title", "Organisation Unit"],
                             data: { recipients: 20, confirmed: 12, unavailable: 2, viewed: 2, unseen: 3, flagged: 1 },
-                            children: [
-                                {
-                                    id: 2,
-                                    details: ["Savannah Blue", "Job, Ti,tle", "Organisation Unit"],
-                                    data: { recipients: 20, confirmed: 10, unavailable: 5, viewed: 2, unseen: 1, flagged: 2 },
-                                    children: [
-                                        {
-                                            id: 4,
-                                            details: ["Chemical Brother", "Job Title", "Organisation Unit"],
-                                            data: { recipients: 20, confirmed: 13, unavailable: 2, viewed: 2, unseen: 2, flagged: 1 },
-                                            children: [
-                                                {
-                                                    id: 6,
-                                                    details: ["Razzamatazz", "Job Title", "Organisation Unit"],
-                                                    data: { recipients: 20, confirmed: 13, unavailable: 2, viewed: 2, unseen: 2, flagged: 1 },
-                                                    children: [
-                                                        {
-                                                            id: 7,
-                                                            details: ["Happenstance", "Job Title", "Organisation Unit"],
-                                                            data: { recipients: 20, confirmed: 13, unavailable: 2, viewed: 2, unseen: 2, flagged: 1 },
-                                                            children: [],
-                                                            subtree: [
-                                                                { id: 20, details: ["Subtree Child", "Gabba", "Hey"], data: { recipients: 6, confirmed: 2, unavailable: 1, viewed: 1, unseen: 1, flagged: 1 }}
-                                                            ]
-                                                        }
-                                                    ]
-                                                }
-                                            ],
-                                            subtree: false
-                                        }
-                                    ]
-                                },
-                                {
-                                    id: 13,
-                                    details: ["Has Subtree", "Gabba", "Hey"],
-                                    data: { recipients: 20, confirmed: 13, unavailable: 2, viewed: 2, unseen: 2, flagged: 1 },
-                                    children: [],
-                                    subtree: [
-                                        { id: 17, details: ["Subtree Child", "Gabba", "Hey"], data: { recipients: 6, confirmed: 2, unavailable: 1, viewed: 1, unseen: 1, flagged: 1 }},
-                                        { id: 18, details: ["Subtree Child", "Gabba", "Hey"], data: { recipients: 6, confirmed: 2, unavailable: 1, viewed: 1, unseen: 1, flagged: 1 }},
-                                        { id: 19, details: ["Subtree Child", "Gabba", "Hey"], data: { recipients: 6, confirmed: 2, unavailable: 1, viewed: 1, unseen: 1, flagged: 1 }}
-                                    ]
-                                }
-                            ],
+                            children: false,
                             subtree: [
-                                { id: 17, details: ["Subtree Child", "Gabba", "Hey"], data: { recipients: 6, confirmed: 2, unavailable: 1, viewed: 1, unseen: 1, flagged: 1 }},
-                                { id: 18, details: ["Subtree Child", "Gabba", "Hey"], data: { recipients: 6, confirmed: 2, unavailable: 1, viewed: 1, unseen: 1, flagged: 1 }},
-                                { id: 19, details: ["Subtree Child", "Gabba", "Hey"], data: { recipients: 6, confirmed: 2, unavailable: 1, viewed: 1, unseen: 1, flagged: 1 }}
+                                {
+                                    id: 1,
+                                    details: ["Joe Red", "Job Title", "Organisation Unit"],
+                                    data: { recipients: 20, confirmed: 12, unavailable: 2, viewed: 2, unseen: 3, flagged: 1 }
+                                }
                             ]
                         }
                     ]'
