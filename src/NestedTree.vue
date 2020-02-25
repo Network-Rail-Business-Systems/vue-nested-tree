@@ -305,13 +305,7 @@
             },
             title_span: function ()
             {
-                let width = this.details_width;
-                
-                if (this.upward_traversal_is_enabled === true) {
-                    width--;
-                }
-                
-                return width;
+                return this.details_width - 1;
             },
             details_width: function ()
             {
@@ -508,7 +502,7 @@
                     }
 
                     if (isSubtree === true) {
-                        if (node.parent.children.expanded === true) {
+                        if (node.parent.children.contents.length > 0 && node.parent.children.expanded === true) {
                             line = 'straight-vertical';
                         } else {
                             line = 'none';
