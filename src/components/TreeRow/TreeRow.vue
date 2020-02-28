@@ -4,7 +4,14 @@
             <tree-line :direction="row_data.lines[depth - 1]"></tree-line>
         </template>
         
-        <td v-if="has_children === true" :class="expand_children_classes" @click="toggleExpandChildren">
+        <td
+            v-if="has_children === true"
+            :class="expand_children_classes"
+            tabindex="0"
+            role="button"
+            @click="toggleExpandChildren"
+            @keydown.space="toggleExpandChildren"
+        >
             <font-awesome-icon
                 :icon="expand_children_icon"
                 :pulse="is_loading_children"
@@ -14,7 +21,14 @@
         </td>
         <tree-line v-else direction="straight-horizontal"></tree-line>
         
-        <td v-if="has_subtree === true" :class="expand_subtree_classes" @click="toggleExpandSubtree">
+        <td
+            v-if="has_subtree === true"
+            :class="expand_subtree_classes"
+            tabindex="0"
+            role="button"
+            @click="toggleExpandSubtree"
+            @keydown.space="toggleExpandSubtree"
+        >
             <font-awesome-icon
                 :icon="expand_subtree_icon"
                 :pulse="is_loading_subtree"

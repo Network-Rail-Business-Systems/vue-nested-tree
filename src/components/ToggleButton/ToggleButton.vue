@@ -1,6 +1,11 @@
 <template>
-    <label class="toggle-button">
-        <div v-if="has_label === true">{{ label_text }}</div>
+    <label
+        @keydown.space="toggleButton"
+        tabindex="0"
+        class="toggle-button"
+        :aria-label="label_text"
+    >
+        <div id="label" v-if="has_label === true">{{ label_text }}</div>
         <input v-model="is_checked" type="checkbox" />
         <span></span>
     </label>
@@ -50,6 +55,13 @@
                 }
                 
                 return this.label;
+            }
+        },
+        
+        methods: {
+            toggleButton: function ()
+            {
+                this.is_checked = !this.is_checked;
             }
         },
         

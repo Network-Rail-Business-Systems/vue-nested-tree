@@ -11,8 +11,13 @@
                         :placeholder="filter_placeholder"
                     ></lookup-item>
                     
-                    <a v-if="related_is_enabled === true" :href="processed_related_url" target="_blank">
-                        <font-awesome-icon icon="eye" title="View Selection"></font-awesome-icon>
+                    <a
+                        v-if="related_is_enabled === true"
+                        :href="processed_related_url"
+                        title="View selection"
+                        target="_blank"
+                    >
+                        <font-awesome-icon icon="eye"></font-awesome-icon>
                     </a>                    
                 </div>
                 
@@ -38,7 +43,14 @@
                 </div>
                 
                 <div v-if="show_download_button === true" class="level-item">
-                    <div @click="downloadCsv" class="has-text-primary is-interactive">
+                    <div
+                        @click="downloadCsv"
+                        @keydown.space="downloadCsv"
+                        title="Download CSV"
+                        class="has-text-primary is-interactive"
+                        role="button"
+                        tabindex="0"
+                    >
                         <font-awesome-icon icon="download" title="Download"></font-awesome-icon>
                     </div>
                 </div>
@@ -50,11 +62,17 @@
         <table class="table is-striped nested-tree">
             <thead>
                 <tr>
-                    <th @click="loadParent" :class="upward_traversal_button_classes">
+                    <th
+                        @click="loadParent"
+                        @keydown.space="loadParent"
+                        :class="upward_traversal_button_classes"
+                        tabindex="0"
+                        role="button"
+                        title="Go up one level"
+                    >
                         <font-awesome-icon
                             :icon="upward_traversal_icon"
                             :pulse="is_loading_parent === true"
-                            title="Go Up One level"
                             size="lg"
                         ></font-awesome-icon>
                     </th>
