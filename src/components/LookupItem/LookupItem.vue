@@ -3,6 +3,8 @@
         @keydown.esc="deactivateLookup(false)"
         @focusout="deactivateLookup"
         :class="lookup_classes"
+        aria-haspopup="true"
+        :aria-expanded="is_active === true && has_searched === true"
     >
         <div class="dropdown-trigger">
             <div class="field">
@@ -21,7 +23,10 @@
                     <span
                         v-show="search_term.length > 0"
                         @click="clearSelection"
+                        @keydown.space="clearSelection"
+                        tabindex="0"
                         class="icon is-right has-text-primary is-interactive"
+                        role="button"
                     >
                         <font-awesome-icon icon="times" title="Clear Search Term"></font-awesome-icon>
                     </span>
@@ -29,14 +34,29 @@
             </div>
         </div>
         
-        <div v-show="has_searched === true" class="dropdown-menu">
+        <div
+            v-show="has_searched === true"
+            class="dropdown-menu"
+        >
             <div class="dropdown-content">
-                <div @click="deactivateLookup" v-show="has_no_results === true" class="dropdown-item">
+                <div
+                    v-show="has_no_results === true"
+                    @click="deactivateLookup"
+                    @keydown.space="deactivateLookup"
+                    tabindex="0"
+                    class="dropdown-item"
+                >
                     <font-awesome-icon icon="info-circle" size="lg"></font-awesome-icon>
                     No results; please try a different term
                 </div>
 
-                <div @click="deactivateLookup" v-show="has_error === true" class="dropdown-item">
+                <div
+                    v-show="has_error === true"
+                    @click="deactivateLookup"
+                    @keydown.space="deactivateLookup"
+                    tabindex="0"
+                    class="dropdown-item"
+                >
                     <div class="level">
                         <font-awesome-icon icon="exclamation-triangle" size="lg" class="level-item"></font-awesome-icon>
                         <p class="level-item">{{ error_message }}</p>
@@ -47,6 +67,9 @@
                     v-for="item in items_found"
                     :key="item.id"
                     @click="selectItem(item)"
+                    @keydown.space="selectItem(item)"
+                    tabindex="0"
+                    
                     class="dropdown-item is-interactive"
                 >
                     <p
