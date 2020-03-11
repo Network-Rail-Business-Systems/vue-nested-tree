@@ -1,4 +1,10 @@
 div.lookup-item {
+    & *::-ms-clear {
+        display: none;
+        height: 0;
+        width: 0;
+    }
+    
     & div.control {
         &.has-icons-right {
             & > span.is-interactive {

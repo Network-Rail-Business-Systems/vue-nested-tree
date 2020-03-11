@@ -57,26 +57,28 @@ A download button is provided that will export the `displayed_tree` as a CSV fil
 
 #### Props
 
-| Name                | Type    | Required | Default     | Sync | Validation      |
-| ------------------- | ------- | -------- | ----------- | ---- | --------------- |
-| children_term       | String  | No       | Children    | No   | isNotBlank      |
-| columns             | Array   | Yes      |             | No   | objectsHaveKeys |
-| csv_details_fields  | Array   | Yes      |             | No   |                 |
-| csv_filename        | String  | No       | nested-tree | No   | isNotBlank      |
-| filter_initial_term | String  | No       |             | No   |                 |
-| filter_load_url     | String  | No       |             | No   | isNotBlank      |
-| filter_search_url   | String  | No       |             | No   | isNotBlank      |
-| filter_placeholder  | String  | No       |             | No   |                 |
-| percentage_of       | String  | No       | null        | No   |                 |
-| related_url         | String  | No       | null        | No   | isNotBlank      |
-| start_group         | Boolean | No       | false       | No   |                 |
-| start_percented     | Boolean | No       | false       | No   |                 |
-| subtree_term        | String  | No       | Subtree     | No   | isNotBlank      |
-| subtree_url         | String  | No       | false       | No   | isNotBlank      |
-| title               | String  | Yes      |             | No   | isNotBlank      |
-| traverse_down_url   | String  | No       | false       | No   | isNotBlank      |
-| traverse_up_url     | String  | No       | false       | No   |                 |
-| tree                | Array   | Yes      |             | No   |                 |
+| Name                | Type            | Required | Default     | Sync | Validation      |
+| ------------------- | --------------- | -------- | ----------- | ---- | --------------- |
+| children_term       | String          | No       | Children    | No   | isNotBlank      |
+| columns             | Array           | Yes      |             | No   | objectsHaveKeys |
+| csv_details_fields  | Array           | Yes      |             | No   |                 |
+| csv_filename        | String          | No       | nested-tree | No   | isNotBlank      |
+| filter_initial_id   | String / Number | No       |             | No   |                 |
+| filter_initial_term | String          | No       |             | No   |                 |
+| filter_load_url     | String          | No       |             | No   | isNotBlank      |
+| filter_search_url   | String          | No       |             | No   | isNotBlank      |
+| filter_placeholder  | String          | No       |             | No   |                 |
+| percentage_of       | String          | No       | null        | No   |                 |
+| related_term        | String          | No       | selection   | No   | isNotBlank      |
+| related_url         | String          | No       | null        | No   | isNotBlank      |
+| start_group         | Boolean         | No       | false       | No   |                 |
+| start_percented     | Boolean         | No       | false       | No   |                 |
+| subtree_term        | String          | No       | Subtree     | No   | isNotBlank      |
+| subtree_url         | String          | No       | false       | No   | isNotBlank      |
+| title               | String          | Yes      |             | No   | isNotBlank      |
+| traverse_down_url   | String          | No       | false       | No   | isNotBlank      |
+| traverse_up_url     | String          | No       | false       | No   |                 |
+| tree                | Array           | Yes      |             | No   |                 |
 
 ##### columns
 
