@@ -14,7 +14,7 @@
                     <a
                         v-if="related_is_enabled === true"
                         :href="processed_related_url"
-                        title="View selection"
+                        :title="related_label"
                         target="_blank"
                     >
                         <font-awesome-icon icon="eye"></font-awesome-icon>
@@ -264,6 +264,11 @@
                 type: String
             },
             
+            related_term: {
+                type: String,
+                default: 'selection',
+                validator: isNotBlank()
+            },
             related_url: {
                 type: String,
                 default: null,
@@ -417,6 +422,10 @@
                 return this.filter_id !== null && this.filter_id !== ''
             },
             
+            related_label: function ()
+            {
+                return 'View ' + this.related_term;
+            },
             related_is_enabled: function ()
             {
                 if (

@@ -20,6 +20,7 @@ export default {
 
             headers = headers.concat(this.csv_details_fields);
             headers.push('Parent');
+            headers.push(this.related_term.charAt(0).toUpperCase() + this.related_term.slice(1));
 
             if (this.is_grouped === true) {
                 fields = this.groups;
@@ -72,6 +73,12 @@ export default {
                 output.push('');
             }
             
+            if (this.filter_has_been_selected === true) {
+                output.push(this.filter_id);
+            } else {
+                output.push('');
+            }
+            
             if (this.is_grouped === true) {
                 fields = this.groups;
             } else {
@@ -106,15 +113,7 @@ export default {
          */
         initiateCsvDownload: function (data)
         {
-            let date = new Date();
-            let filename = this.csv_filename + '_' 
-                + date.getUTCFullYear() + '-' 
-                + date.getUTCMonth() + '-' 
-                + date.getUTCDay() + '_'
-                + date.getUTCHours() + '-' 
-                + date.getUTCMinutes() + '-' 
-                + date.getUTCSeconds()
-                + '.csv';
+            let filename = this.makeCsvFilename();
             
             if (window.navigator.msSaveOrOpenBlob) {
                 let blob = new Blob([data], { type: 'text/csv'});
@@ -127,6 +126,29 @@ export default {
                 element.download = filename;
                 element.click();
             }
+        },
+
+        /**
+         * 
+         * @returns string
+         */
+        makeCsvFilename: function ()
+        {
+            let date = new Date();
+            let filename = this.csv_filename;
+            
+            if (this.filter_has_been_selected === true) {
+                filename += '_' + this.related_term + '-' + this.filter_id;
+            }
+            
+            return filename 
+                + '_' + date.getUTCFullYear()                 
+                + '-' + date.getUTCMonth() 
+                + '-' + date.getUTCDay() 
+                + '_' + date.getUTCHours() 
+                + '-' + date.getUTCMinutes() 
+                + '-' + date.getUTCSeconds()
+                + '.csv';
         },
 
         /**
