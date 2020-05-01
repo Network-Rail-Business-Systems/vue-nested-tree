@@ -1,8 +1,8 @@
 <template>
     <div
         ref="base"
-        @keydown.esc="deactivateLookup($event, false)"
-        @focusout="deactivateLookup($event, true)"
+        @keydown.esc="deactivateLookup"
+        @focusout="deactivateLookupAfterInterval($event)"
         :class="lookup_classes"
         aria-haspopup="true"
         :aria-expanded="is_active === true && has_searched === true"
@@ -42,8 +42,8 @@
             <div class="dropdown-content">
                 <div
                     v-show="has_no_results === true"
-                    @click="deactivateLookup($event, true)"
-                    @keydown.space="deactivateLookup($event, true)"
+                    @click="deactivateLookup"
+                    @keydown.space="deactivateLookup"
                     tabindex="0"
                     class="dropdown-item"
                 >
@@ -53,8 +53,8 @@
 
                 <div
                     v-show="has_error === true"
-                    @click="deactivateLookup($event, true)"
-                    @keydown.space="deactivateLookup($event, true)"
+                    @click="deactivateLookup"
+                    @keydown.space="deactivateLookup"
                     tabindex="0"
                     class="dropdown-item"
                 >
@@ -104,25 +104,7 @@
                 has_searched: false,
                 is_active: false,
                 is_searching: false,
-                items_found: [
-                    { id: 1, details: ['pop'] },
-                    { id: 2, details: ['pop'] },
-                    { id: 3, details: ['pop'] },
-                    { id: 4, details: ['pop'] },
-                    { id: 5, details: ['pop'] },
-                    { id: 6, details: ['pop'] },
-                    { id: 7, details: ['pop'] },
-                    { id: 8, details: ['pop'] },
-                    { id: 9, details: ['pop'] },
-                    { id: 10, details: ['pop'] },
-                    { id: 11, details: ['pop'] },
-                    { id: 12, details: ['pop'] },
-                    { id: 13, details: ['pop'] },
-                    { id: 14, details: ['pop'] },
-                    { id: 15, details: ['pop'] },
-                    { id: 16, details: ['pop'] },
-                    { id: 17, details: ['pop'] }
-                ],
+                items_found: [],
                 item_selected: null,
                 search_term: this.initial_term,
                 search_timer: null
@@ -201,17 +183,15 @@
                 
                 this.is_active = true;
             },
-            deactivateLookup: function (event, now)
+            deactivateLookupAfterInterval: function (event)
             {
-                console.log('Deactivating...', event, now, document.activeElement);
-                
-                if (now === true) {
-                    this.deactivateLookupAfterInterval();
-                } else {
-                    this.focus_timer = window.setTimeout(this.deactivateLookupAfterInterval, 110);
+                if (this.$refs.base.contains(event.relatedTarget) === true) {
+                    return false;
                 }
+                
+                this.focus_timer = window.setTimeout(this.deactivateLookup, 110);
             },
-            deactivateLookupAfterInterval: function ()
+            deactivateLookup: function ()
             {
                 this.is_active = false;
             },
@@ -227,10 +207,10 @@
             },
             selectItem: function (item)
             {
-                this.deactivateLookup(true);
                 this.item_selected = item;
                 this.search_term = item.details[0];
                 this.$emit('selected', item);
+                this.deactivateLookup();
             },
             itemDetailClasses: function (index)
             {
@@ -313,7 +293,6 @@
                 
                 this.has_searched = false;
                 this.items_found = [];
-                
                 this.readyLookup();
             }
         }
