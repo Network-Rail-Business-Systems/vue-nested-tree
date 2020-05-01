@@ -38,7 +38,8 @@
                     <toggle-button
                         @click="togglePercented"
                         :checked.sync="is_percented"
-                        label="Percentages"
+                        label_on="Percentages"
+                        label_off="Values"
                     ></toggle-button>
                 </div>
                 

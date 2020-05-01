@@ -1,7 +1,8 @@
 <template>
     <div
-        @keydown.esc="deactivateLookup(false)"
-        @focusout="deactivateLookup"
+        ref="base"
+        @keydown.esc="deactivateLookup"
+        @focusout="deactivateLookupAfterInterval($event)"
         :class="lookup_classes"
         aria-haspopup="true"
         :aria-expanded="is_active === true && has_searched === true"
@@ -99,6 +100,7 @@
         {
             return {
                 error_message: null,
+                focus_timer: null,
                 has_searched: false,
                 is_active: false,
                 is_searching: false,
@@ -174,17 +176,22 @@
         methods: {
             activateLookup: function ()
             {
+                if (this.focus_timer !== null) {
+                    window.clearTimeout(this.focus_timer);
+                    this.focus_timer = null;
+                }
+                
                 this.is_active = true;
             },
-            deactivateLookup: function (now)
+            deactivateLookupAfterInterval: function (event)
             {
-                if (now === true) {
-                    this.deactivateLookupAfterInterval();
-                } else {
-                    window.setTimeout(this.deactivateLookupAfterInterval, 110);
+                if (this.$refs.base.contains(event.relatedTarget) === true) {
+                    return false;
                 }
+                
+                this.focus_timer = window.setTimeout(this.deactivateLookup, 110);
             },
-            deactivateLookupAfterInterval: function ()
+            deactivateLookup: function ()
             {
                 this.is_active = false;
             },
@@ -200,10 +207,10 @@
             },
             selectItem: function (item)
             {
-                this.deactivateLookup(true);
                 this.item_selected = item;
                 this.search_term = item.details[0];
                 this.$emit('selected', item);
+                this.deactivateLookup();
             },
             itemDetailClasses: function (index)
             {
@@ -286,7 +293,6 @@
                 
                 this.has_searched = false;
                 this.items_found = [];
-                
                 this.readyLookup();
             }
         }
