@@ -1,5 +1,11 @@
 tr.tree-row {
     & > td {
+        & > p {
+            & > a {
+                margin-left: 0.25em;
+            }
+        }
+        
         &.expanded {
             border-bottom-style: none;
         }

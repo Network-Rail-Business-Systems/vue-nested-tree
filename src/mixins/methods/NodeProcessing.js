@@ -68,6 +68,7 @@ export default {
 
                 id: sourceData.id,
                 details: sourceData.details,
+                link: typeof sourceData.link === 'string' ? sourceData.link : null,
                 values: sourceData.data,
                 groups: null,
                 percentages: null,
