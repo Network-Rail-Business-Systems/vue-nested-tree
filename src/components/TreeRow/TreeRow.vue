@@ -49,7 +49,18 @@
                 v-for="(detail, index) in row_data.details"
                 :key="index"
                 :class="detailClasses(index)"
-            >{{detail}}</p>
+            >
+                {{detail}}
+                
+                <a
+                    v-if="index === 0 && row_data.link !== null"
+                    class=""
+                    :href="row_data.link"
+                    target="_blank"
+                >
+                    <font-awesome-icon icon="eye" title="View"></font-awesome-icon>
+                </a>
+            </p>
             
             <div class="tag is-danger" v-if="has_error === true">
                 <font-awesome-icon icon="exclamation-triangle"></font-awesome-icon>
