@@ -34,7 +34,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div
             v-show="has_searched === true"
             class="dropdown-menu"
@@ -63,14 +63,27 @@
                         <p class="level-item">{{ error_message }}</p>
                     </div>
                 </div>
-                
+
+                <div v-show="lookup_pagination && has_previous_page"
+                     class="dropdown-item is-interactive"
+                     @mouseup="previousPage()"
+                     @keydown.space="previousPage()"
+                >
+                  <a class="lookup-item-pagination" tabindex="0">
+                    <span class="icon">
+                        <font-awesome-icon icon="chevron-left" title="Previous"></font-awesome-icon>
+                    </span>
+                    <span>Previous</span>
+                  </a>
+                </div>
+
                 <div
                     v-for="item in items_found"
                     :key="item.id"
                     @click="selectItem(item)"
                     @keydown.space="selectItem(item)"
                     tabindex="0"
-                    
+
                     class="dropdown-item is-interactive"
                 >
                     <p
@@ -78,6 +91,19 @@
                         :key="index"
                         :class="itemDetailClasses(index)"
                     >{{ text }}</p>
+                </div>
+                <div v-show="lookup_pagination && has_next_page"
+                     class="dropdown-item is-interactive"
+                     @mouseup="nextPage()"
+                     @keydown.space="nextPage()"
+
+                >
+                    <a class="lookup-item-pagination" tabindex="0">
+                      <span class="icon">
+                          <font-awesome-icon icon="chevron-right" title="Next"></font-awesome-icon>
+                      </span>
+                      <span>Next</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -91,11 +117,11 @@
 
     export default {
         name: 'lookup-item',
-        
+
         components: {
             FontAwesomeIcon
         },
-        
+
         data: function ()
         {
             return {
@@ -107,10 +133,13 @@
                 items_found: [],
                 item_selected: null,
                 search_term: this.initial_term,
-                search_timer: null
+                search_timer: null,
+                page: 1,
+                has_previous_page: false,
+                has_next_page: false,
             }
         },
-        
+
         props: {
             initial_term: {
                 type: String,
@@ -130,9 +159,13 @@
                 type: String,
                 default: 'Type to search...',
                 validator: isNotBlank()
+            },
+            lookup_pagination: {
+              type: Boolean,
+              default: false
             }
         },
-        
+
         computed: {
             has_error: function ()
             {
@@ -143,11 +176,11 @@
                 if (this.has_searched === false) {
                     return false;
                 }
-                
+
                 if (this.has_error === true) {
                     return false;
                 }
-                
+
                 return this.items_found.length < 1;
             },
             lookup_classes: function ()
@@ -156,11 +189,11 @@
                     'lookup-item',
                     'dropdown'
                 ];
-                
+
                 if (this.is_active === true) {
                     classes.push( 'is-active');
                 }
-                
+
                 return classes;
             },
             search_icon: function ()
@@ -168,11 +201,11 @@
                 if (this.is_searching === true) {
                     return 'spinner';
                 }
-                
+
                 return 'search';
             }
         },
-        
+
         methods: {
             activateLookup: function ()
             {
@@ -180,29 +213,30 @@
                     window.clearTimeout(this.focus_timer);
                     this.focus_timer = null;
                 }
-                
+
                 this.is_active = true;
             },
             deactivateLookupAfterInterval: function (event)
             {
+                console.log(event);
                 if (this.$refs.base.contains(event.relatedTarget) === true) {
                     return false;
                 }
-                
+
                 this.focus_timer = window.setTimeout(this.deactivateLookup, 110);
             },
             deactivateLookup: function ()
             {
                 this.is_active = false;
             },
-            
+
             clearSelection: function ()
             {
                 this.has_searched = false;
                 this.items_found = [];
                 this.item_selected = null;
                 this.search_term = '';
-                
+
                 this.$emit('cleared');
             },
             selectItem: function (item)
@@ -217,29 +251,29 @@
                 if (index === 0) {
                     return 'has-text-weight-bold';
                 }
-                
+
                 return ''
             },
-            
+
             readyLookup: function ()
             {
                 if (this.search_timer !== null) {
                     window.clearTimeout(this.search_timer);
                 }
-                
+
                 if (this.is_searching === true) {
                     return false;
                 }
-                
+
                 if (this.search_term === '') {
                     this.clearSelection();
                     return false;
                 }
-                
+
                 if (this.search_term.length < this.min_length) {
                     return false;
                 }
-                
+
                 this.search_timer = window.setTimeout(this.lookupItem, 300);
             },
             lookupItem: function ()
@@ -247,12 +281,9 @@
                 this.has_searched = false;
                 this.is_searching = true;
                 this.$emit('searching', this.search_term);
-                
-                axios.post(
-                    this.lookup_url,
-                    {
-                        search_term: this.search_term
-                    }
+
+                axios.get(
+                    `${this.lookup_url}?page=${this.page}&search=${this.search_term}`
                 )
                     .then(this.lookupSuccess)
                     .catch(this.lookupFailure)
@@ -265,6 +296,10 @@
                 } else {
                     if (typeof response.data.data === 'object') {
                         this.items_found = response.data.data;
+                        if (this.lookup_pagination) {
+                          this.has_previous_page = response.data.links.prev !== null;
+                          this.has_next_page = response.data.links.next !== null;
+                        }
                     } else {
                         this.items_found = response.data;
                     }
@@ -281,16 +316,32 @@
                 this.is_searching = false;
                 this.search_timer = null;
                 this.$emit('searched');
+            },
+            previousPage: function ()
+            {
+                if (this.page === 1) {
+                    this.has_previous_page = false;
+                }
+
+                this.page = this.page -1;
+                this.lookupItem();
+                window.setTimeout(this.activateLookup, 110);
+            },
+            nextPage: function ()
+            {
+                this.page = this.page + 1;
+                this.lookupItem();
+                window.setTimeout(this.activateLookup, 110);
             }
         },
-        
+
         watch: {
             search_term: function ()
             {
                 if (this.is_active === false) {
                     return;
                 }
-                
+
                 this.has_searched = false;
                 this.items_found = [];
                 this.readyLookup();

@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width,initial-scale=1.0">
         <title>vue-nested-tree</title>
     </head>
-    
+
     <body>
         <section class="section">
             <div id="app">
@@ -26,8 +26,8 @@
                     ]'
                     filter_initial_id="1"
                     filter_initial_term="Potatochan"
-                    filter_search_url="potato/search"
-                    filter_load_url="endpoint/filter/%id/%filter"
+                    filter_search_url="endpoint/filter.json"
+                    filter_load_url="endpoint/filter.json"
                     filter_placeholder="Find a briefing..."
                     :groups='[
                         { name: "Recipients", field: "recipients", icon: "user", fields: ["recipients"] },
@@ -59,6 +59,7 @@
                             ]
                         }
                     ]'
+                    :lookup_pagination="true"
                 ></nested-tree>
             </div>
         </section>

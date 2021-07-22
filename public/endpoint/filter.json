@@ -1,0 +1,111 @@
+{
+  "data": [
+    {
+      "id": 2,
+      "details": [
+        "Dev Eloper",
+        "developer@example.com"
+      ]
+    },
+    {
+      "id": 1,
+      "details": [
+        "Admin Istrator",
+        "admin@example.com"
+      ]
+    },
+    {
+      "id": 10,
+      "details": [
+        "Known As 10 Last Name 10",
+        "Email 10"
+      ]
+    },
+    {
+      "id": 11,
+      "details": [
+        "Known As 11 Last Name 11",
+        "Email 11"
+      ]
+    },
+    {
+      "id": 12,
+      "details": [
+        "Known As 12 Last Name 12",
+        "Email 12"
+      ]
+    },
+    {
+      "id": 13,
+      "details": [
+        "Known As 13 Last Name 13",
+        "Email 13"
+      ]
+    },
+    {
+      "id": 3,
+      "details": [
+        "Known As 3 Last Name 3",
+        "Email 3"
+      ]
+    },
+    {
+      "id": 4,
+      "details": [
+        "Known As 4 Last Name 4",
+        "Email 4"
+      ]
+    },
+    {
+      "id": 6,
+      "details": [
+        "Known As 6 Last Name 6",
+        "Email 6"
+      ]
+    },
+    {
+      "id": 7,
+      "details": [
+        "Known As 7 Last Name 7",
+        "Email 7"
+      ]
+    }
+  ],
+  "links": {
+    "first": "endpoint/filter.json?page=1",
+    "last": "endpoint/filter.json?page=2",
+    "prev": null,
+    "next": "endpoint/filter.json?page=2"
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 2,
+    "links": [
+      {
+        "url": null,
+        "label": "&laquo; Previous",
+        "active": false
+      },
+      {
+        "url": "endpoint/filter.json?page=1",
+        "label": "1",
+        "active": true
+      },
+      {
+        "url": "endpoint/filter.json?page=1",
+        "label": "2",
+        "active": false
+      },
+      {
+        "url": "endpoint/filter.json?page=1",
+        "label": "Next &raquo;",
+        "active": false
+      }
+    ],
+    "path": "endpoint/filter.json",
+    "per_page": 10,
+    "to": 10,
+    "total": 12
+  }
+}
