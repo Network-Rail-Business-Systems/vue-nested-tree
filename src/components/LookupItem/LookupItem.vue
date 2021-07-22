@@ -218,7 +218,6 @@
             },
             deactivateLookupAfterInterval: function (event)
             {
-                console.log(event);
                 if (this.$refs.base.contains(event.relatedTarget) === true) {
                     return false;
                 }
