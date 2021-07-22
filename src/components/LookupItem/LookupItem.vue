@@ -282,7 +282,7 @@
                 this.$emit('searching', this.search_term);
 
                 axios.get(
-                    `${this.lookup_url}?page=${this.page}&search=${this.search_term}`
+                    `${this.lookup_url}?page=${this.page}&search_term=${this.search_term}`
                 )
                     .then(this.lookupSuccess)
                     .catch(this.lookupFailure)
