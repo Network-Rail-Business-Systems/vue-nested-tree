@@ -325,7 +325,7 @@ Replace a `<td>` element with a `<tree-line>` component, and pass one of the fol
 
 #### Usage
 
-A POST request is sent to the `lookup_url` containing the `search_term` field.
+A GET request is sent to the `lookup_url` containing the `search_term` field.
 
 The server response must contain an array of objects with the following properties; other properties may be included but will not be parsed, though they will be available to any parent component via the `select` event:
 
@@ -342,14 +342,17 @@ If there are no matches the server should return either an empty / null response
 
 If a term should be already present in the input box, you may pass an `initial_term`.
 
+To enable pagination set `lookup_pagination` to true and the page number will be updated in the GET request.
+
 #### Props
 
-| Name         | Type    | Required | Default           | Sync | Validation              |
-| ------------ | ------- | -------- | ----------------- | ---- | ----------------------- |
-| initial_term | String  | No       |                   | No   |                         |
-| lookup_url   | String  | Yes      |                   | No   | isNotBlank()            |
-| min_length   | Number  | No       | 3                 | No   | greaterThanOrEqualTo(0) |
-| placeholder  | String  | No       | Type to search... | No   | isNotBlank()            |
+| Name              | Type    | Required | Default           | Sync | Validation              |
+| ----------------- | ------- | -------- | ----------------- | ---- | ----------------------- |
+| initial_term      | String  | No       |                   | No   |                         |
+| lookup_url        | String  | Yes      |                   | No   | isNotBlank()            |
+| min_length        | Number  | No       | 3                 | No   | greaterThanOrEqualTo(0) |
+| placeholder       | String  | No       | Type to search... | No   | isNotBlank()            |
+| lookup_pagination | Boolean | No       | false             | No   |                         |
 
 #### Events
 

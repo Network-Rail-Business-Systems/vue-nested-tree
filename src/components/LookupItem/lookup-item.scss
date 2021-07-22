@@ -4,16 +4,16 @@ div.lookup-item {
         height: 0;
         width: 0;
     }
-    
+
     & div.control {
         &.has-icons-right {
             & > span.is-interactive {
                 cursor: pointer;
                 pointer-events: all;
-            } 
+            }
         }
     }
-    
+
     & > div.dropdown-menu {
         & > div.dropdown-content {
             max-height: 13rem;
@@ -35,4 +35,10 @@ div.lookup-item {
             }
         }
     }
+}
+
+.lookup-item-pagination {
+    display: block;
+    width: 100%;
+    height: 100%;
 }

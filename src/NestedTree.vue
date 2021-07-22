@@ -9,8 +9,9 @@
                         :initial_term="filter_initial_term"
                         :lookup_url="filter_search_url"
                         :placeholder="filter_placeholder"
+                        :lookup_pagination="lookup_pagination"
                     ></lookup-item>
-                    
+
                     <a
                         v-if="related_is_enabled === true"
                         :href="processed_related_url"
@@ -18,12 +19,12 @@
                         target="_blank"
                     >
                         <font-awesome-icon icon="eye"></font-awesome-icon>
-                    </a>                    
+                    </a>
                 </div>
-                
+
                 <div class="level-item"><slot name="header-left"></slot></div>
             </div>
-            
+
             <div class="level-right">
                 <div v-if="grouping_is_enabled === true" class="level-item">
                     <toggle-button
@@ -33,7 +34,7 @@
                         label_off="Ungrouped"
                     ></toggle-button>
                 </div>
-                
+
                 <div v-if="percenting_is_enabled === true" class="level-item">
                     <toggle-button
                         @click="togglePercented"
@@ -42,7 +43,7 @@
                         label_off="Values"
                     ></toggle-button>
                 </div>
-                
+
                 <div v-if="show_download_button === true" class="level-item">
                     <div
                         @click="downloadCsv"
@@ -55,11 +56,11 @@
                         <font-awesome-icon icon="download" title="Download"></font-awesome-icon>
                     </div>
                 </div>
-                
+
                 <slot name="header-right"></slot>
             </div>
         </div>
-        
+
         <table class="table is-striped nested-tree">
             <thead>
                 <tr>
@@ -77,17 +78,17 @@
                             size="lg"
                         ></font-awesome-icon>
                     </th>
-                    
+
                     <th :colspan="title_span">
                         <div class="tag is-danger" v-if="has_load_parent_error === true">
                             <font-awesome-icon icon="exclamation-triangle"></font-awesome-icon>
                             {{ load_parent_error }}
                         </div>
-                        
+
                         {{title}}
                     </th>
-                    
-                    <template v-if="is_grouped === false"> 
+
+                    <template v-if="is_grouped === false">
                         <th
                             v-for="(column, index) in columns"
                             :key="index"
@@ -106,7 +107,7 @@
                     </template>
                 </tr>
             </thead>
-            
+
             <tbody>
                 <tr v-if="is_loading_tree === true">
                     <td :colspan="table_width" class="has-text-centered notification is-grey has-text-grey has-text-weight-bold">
@@ -114,14 +115,14 @@
                         Loading Tree...
                     </td>
                 </tr>
-                
+
                 <tr v-else-if="is_processing === true">
                     <td :colspan="table_width" class="has-text-centered notification is-grey has-text-grey has-text-weight-bold">
                         <font-awesome-icon icon="spinner" pulse class="inline-icon"></font-awesome-icon>
                         Processing Tree...
                     </td>
                 </tr>
-                
+
                 <tr v-else-if="tree_is_empty === true">
                     <td :colspan="table_width" class="has-text-centered notification is-grey has-text-grey has-text-weight-bold">
                         <font-awesome-icon icon="exclamation-triangle" class="inline-icon"></font-awesome-icon>
@@ -136,7 +137,7 @@
                             {{ load_tree_error }}
                         </td>
                     </tr>
-                    
+
                     <template v-for="row in displayed_tree">
                         <subtree-row
                             v-if="row.type === 'subtree'"
@@ -148,7 +149,7 @@
                             :is_grouped="is_grouped"
                             :is_percented="is_percented"
                         ></subtree-row>
-                        
+
                         <tree-row
                             v-else
                             :key="row.uid"
@@ -194,7 +195,7 @@
     import children_term from "./mixins/props/children_term";
     import subtree_term from "./mixins/props/subtree_term";
     import csv_filename from './mixins/props/csv_filename.js';
-    
+
     export default {
         name: 'nested-tree',
         components: {
@@ -204,7 +205,7 @@
             ToggleButton,
             SubtreeRow
         },
-        
+
         mixins: [
             columns,
             groups,
@@ -221,7 +222,7 @@
             subtree_term,
             csv_filename
         ],
-        
+
         data: function ()
         {
             return {
@@ -236,13 +237,13 @@
                 filter_id: this.filter_initial_id
             }
         },
-        
+
         props: {
             csv_details_fields: {
                 type: Array,
                 required: true
             },
-            
+
             filter_initial_id: {
                 type: String|Number,
                 default: null
@@ -264,7 +265,7 @@
             filter_placeholder: {
                 type: String
             },
-            
+
             related_term: {
                 type: String,
                 default: 'selection',
@@ -275,54 +276,59 @@
                 default: null,
                 validator: isNotBlank()
             },
-            
+
             start_grouped: {
                 type: Boolean,
                 default: false
             },
-            
+
             start_percented: {
                 type: Boolean,
                 default: false
             },
-            
+
             title: {
                 type: String,
                 required: true,
                 validator: isNotBlank()
             },
-            
+
             traverse_up_url: {
                 type: String,
                 default: null,
                 validator: isNotBlank()
             },
-            
+
             tree: {
                 type: Array,
                 required: true
+            },
+
+            lookup_pagination: {
+              type: Boolean,
+              default: false
             }
         },
-        
+
         computed: {
             displayed_tree: function ()
             {
                 let displayedTree = [];
-                
+
                 for (let index in this.processed_tree) {
                     let visibleNodes = this.filterVisibleNodes(this.processed_tree[index], false);
                     if (visibleNodes !== false) {
                         displayedTree = displayedTree.concat(visibleNodes);
                     }
                 }
-                
+
                 return displayedTree;
             },
             tree_is_empty: function ()
             {
                 return this.displayed_tree.length < 1;
             },
-            
+
             table_width: function ()
             {
                 return this.details_width + this.values_width;
@@ -340,14 +346,14 @@
                         width = this.processed_tree[index].levels;
                     }
                 }
-                
+
                 // +1 width for base level and for expand button
                 width += 2;
-                
+
                 if (this.subtree_is_enabled === true) {
                     width++;
                 }
-                
+
                 return width;
             },
             values_width: function ()
@@ -358,13 +364,13 @@
 
                 return this.columns.length;
             },
-            
+
             upward_traversal_button_classes: function ()
             {
                 if (this.can_traverse_upward === true) {
                     return 'is-narrow is-interactive has-text-primary';
                 }
-                
+
                 return 'is-narrow has-text-grey-lighter';
             },
             upward_traversal_is_enabled: function ()
@@ -376,7 +382,7 @@
                 if (this.is_loading_parent === true) {
                     return 'spinner';
                 }
-                
+
                 return 'angle-double-up';
             },
             top_node: function ()
@@ -384,21 +390,21 @@
                 if (this.processed_tree.length < 1) {
                     return null;
                 }
-                
+
                 return this.processed_tree[0];
             },
-            
+
             show_download_button: function ()
             {
                 return this.tree_is_empty === false;
             },
-            
+
             can_traverse_upward: function ()
             {
                 if (this.top_node === null) {
                     return false;
                 }
-                
+
                 return this.upward_traversal_is_enabled === true && this.top_node.parent === true;
             },
             has_load_parent_error: function ()
@@ -409,20 +415,20 @@
             {
                 return this.load_tree_error !== null;
             },
-            
+
             filter_is_enabled: function ()
             {
                 if (this.filter_load_url !== null && this.filter_search_url !== null) {
                     return true;
                 }
-                
+
                 return false;
             },
             filter_has_been_selected: function ()
             {
                 return this.filter_id !== null && this.filter_id !== ''
             },
-            
+
             related_label: function ()
             {
                 return 'View ' + this.related_term;
@@ -435,7 +441,7 @@
                 ) {
                     return true;
                 }
-                
+
                 return false;
             },
             processed_related_url: function ()
@@ -443,7 +449,7 @@
                 return this.related_url.replace('%id', this.filter_id);
             }
         },
-        
+
         methods: {
             /**
              * Creates a tree based on the source data that includes visibility, grouping, and percentage data
@@ -453,19 +459,19 @@
             createProcessedTree: function (sourceTree)
             {
                 let processedTree = [];
-                
+
                 this.is_processing = true;
-                
+
                 for (let index in sourceTree) {
                     processedTree.push(
                         this.processTreeData(sourceTree[index], null)
                     );
                 }
-                
+
                 this.is_processing = false;
                 return processedTree;
             },
-            
+
             /**
              * Recursively filters a tree node and its children for visible nodes
              * @param treeNode Object The nested tree dataset
@@ -475,14 +481,14 @@
             filterVisibleNodes: function (treeNode, hasSiblingAfter)
             {
                 let visibleNodes = [];
-                
+
                 if (this.nodeIsVisible(treeNode) === false) {
                     return false;
                 }
-                
+
                 this.calculatePassthroughLines(treeNode, hasSiblingAfter, false);
                 visibleNodes.push(treeNode);
-                
+
                 // Output subtree nodes
                 if (treeNode.subtree.expanded === true) {
                     for (let index in treeNode.subtree.contents) {
@@ -492,7 +498,7 @@
                         visibleNodes.push(subtreeNode);
                     }
                 }
-                
+
                 for (let index in treeNode.children.contents) {
                     let siblingAfter = parseInt(index) !== treeNode.children.contents.length - 1;
                     let child = this.filterVisibleNodes(treeNode.children.contents[index], siblingAfter);
@@ -500,10 +506,10 @@
                         visibleNodes = visibleNodes.concat(child);
                     }
                 }
-                
-                return visibleNodes; 
+
+                return visibleNodes;
             },
-            
+
             /**
              * Determines where to place passthrough lines for tree visualisation
              * @param node Object A tree node
@@ -515,7 +521,7 @@
                 let line;
                 let lines = [];
                 let armIndex = node.depth - 1;
-                
+
                 if (typeof node.parent === 'object') {
                     for (let index in node.parent.lines) {
                         switch (node.parent.lines[index]) {
@@ -535,11 +541,11 @@
                         } else {
                             line = 'none';
                         }
-                        
+
                         lines[armIndex] = line;
                         armIndex++;
                     }
-                    
+
                     if (hasSiblingAfter === true) {
                         line = 'tee-right';
                     } else {
@@ -548,10 +554,10 @@
 
                     lines[armIndex] = line;
                 }
-                
+
                 this.$set(node, 'lines', lines);
             },
-            
+
             /**
              * Determine whether or not a tree node should be visible
              * @param treeNode Object The node to test
@@ -562,34 +568,34 @@
                 if (typeof treeNode.parent !== 'object') {
                     return true;
                 }
-                
+
                 if (treeNode.parent.children.expanded === true) {
                     return true;
                 }
-                
+
                 return false;
             },
-            
+
             togglePercented: function ()
             {
                 this.is_percented = !this.is_percented;
             },
-            
+
             toggleGrouped: function ()
             {
                 this.is_grouped = !this.is_grouped;
             },
-            
+
             loadParent: function ()
             {
                 if (this.is_loading_parent === true || this.can_traverse_upward === false) {
                     return;
                 }
-                
+
                 let url = this.prepareUrl(this.traverse_up_url, this.top_node.id, this.filter_id);
                 this.is_loading_parent = true;
                 this.load_parent_error = null;
-                
+
                 axios.get(url)
                     .then(this.loadParentSuccess)
                     .catch(this.loadParentFailure)
@@ -600,10 +606,10 @@
                 if (response.data === "") {
                     return;
                 }
-                
+
                 let oldTree = this.processed_tree;
                 let parentTree = this.processTreeData(response.data, null);
-                
+
                 this.mergeChildTreeWithParent(parentTree, oldTree);
                 this.processed_tree = [parentTree];
             },
@@ -628,19 +634,19 @@
                 let nodeToJoin = childTree[0];
                 let targetNode = parentTree;
                 let targetAddress = this.findNodeWithinTree(nodeToJoin.id, parentTree);
-                
+
                 if (targetAddress === false) {
                     return;
                 }
-                
+
                 targetAddress = targetAddress.split(',');
-                
+
                 for (index; index < targetAddress.length - 1; index++) {
                     targetNode = targetNode.children.contents[targetAddress[index]];
                 }
-                
+
                 nodeToJoin.parent = targetNode;
-                
+
                 targetNode.children.contents.splice(targetAddress[targetAddress.length - 1], 1);
                 targetNode.children.contents.push(nodeToJoin);
                 this.recalculateTreeDepthAndLevels(parentTree, 0);
@@ -656,17 +662,17 @@
             {
                 for (let index in node.children.contents) {
                     let childNode = node.children.contents[index];
-                    
+
                     if (childNode.id === nodeId) {
                         return index;
                     }
-                    
+
                     let result = this.findNodeWithinTree(nodeId, childNode);
                     if (result !== false) {
                         return index + ',' + result;
                     }
                 }
-                
+
                 return false;
             },
 
@@ -679,31 +685,31 @@
             recalculateTreeDepthAndLevels: function (node, depth)
             {
                 let lowestDepth = depth;
-                
+
                 node.depth = depth;
                 node.levels = 0;
-                
+
                 for (let index in node.subtree.contents) {
                     node.subtree.contents[index].depth = depth + 1;
                 }
-                
+
                 for (let index in node.children.contents) {
                     let lastDepth = this.recalculateTreeDepthAndLevels(node.children.contents[index], depth + 1);
-                    
+
                     if (lastDepth > lowestDepth) {
                         lowestDepth = lastDepth;
                     }
-                    
+
                     let level = lowestDepth - node.depth;
-                    
+
                     if (level > node.levels) {
                         node.levels = level;
                     }
                 }
-                
+
                 return lowestDepth;
             },
-            
+
             selectFilter: function (item)
             {
                 this.filter_id = item.id;
@@ -714,14 +720,14 @@
                 this.filter_id = null;
                 this.loadTree();
             },
-            
+
             loadTree: function ()
             {
                 this.is_loading_tree = true;
                 this.load_tree_error = null;
-                
+
                 let url = this.prepareUrl(this.filter_load_url, this.top_node.id, this.filter_id);
-                
+
                 axios.get(url)
                     .then(this.loadTreeSuccess)
                     .catch(this.loadTreeFailure)
@@ -737,7 +743,7 @@
                 if (Array.isArray(response.data) === false) {
                     response.data = [ response.data ];
                 }
-                
+
                 this.processed_tree = this.createProcessedTree(response.data);
             },
             loadTreeFailure: function (error)
@@ -750,12 +756,12 @@
                 this.is_loading_tree = false;
             }
         },
-        
+
         mounted: function ()
         {
             this.processed_tree = this.createProcessedTree(this.tree);
         },
-        
+
         watch: {
             tree: function ()
             {

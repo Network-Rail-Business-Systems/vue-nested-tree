@@ -16,23 +16,23 @@ div.lookup-item {
 
 table.nested-tree {
     height: 100%;
-    
+
     & td {
         vertical-align: middle;
 
         &.has-tree-button {
             border-bottom-style: none;
         }
-        
+
         & > p {
             margin-top: 0;
         }
-        
+
         & > svg.inline-icon {
             margin-right: 0.5em;
         }
     }
-    
+
     & td,
     & th {
         & > div {
@@ -43,4 +43,8 @@ table.nested-tree {
             }
         }
     }
+}
+
+.table-container {
+    overflow: visible;
 }
