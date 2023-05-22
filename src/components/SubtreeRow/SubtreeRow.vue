@@ -33,13 +33,13 @@
 </template>
 
 <script>
-    import TreeLine from "../TreeLine/TreeLine";
-    import {objectHasKeys} from "../../mixins/FoxValidators";
+    import TreeLine from "../TreeLine/TreeLine.vue";
+    import {objectHasKeys} from "../../mixins/FoxValidators.js";
     import columns from "../../mixins/props/columns.js";
     import groups from "../../mixins/props/groups.js";
-    import is_grouped from "../../mixins/props/is_grouped";
-    import is_percented from "../../mixins/props/is_percented";
-    import tree_width from "../../mixins/props/tree_width";
+    import is_grouped from "../../mixins/props/is_grouped.js";
+    import is_percented from "../../mixins/props/is_percented.js";
+    import tree_width from "../../mixins/props/tree_width.js";
 
     export default {
         name: 'subtree-row',

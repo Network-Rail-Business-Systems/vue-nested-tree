@@ -98,16 +98,16 @@
     import columns from "../../mixins/props/columns.js";
     import traverse_down_url from "../../mixins/props/traverse_down_url.js";
     import subtree_url from "../../mixins/props/subtree_url.js";
-    import is_grouped from "../../mixins/props/is_grouped";
-    import is_percented from "../../mixins/props/is_percented";
-    import tree_width from "../../mixins/props/tree_width";
-    import subtree_is_enabled from "../../mixins/computed/subtree_is_enabled";
-    import percenting_is_enabled from "../../mixins/computed/percenting_is_enabled";
-    import grouping_is_enabled from "../../mixins/computed/grouping_is_enabled";
-    import percentage_of from "../../mixins/props/percentage_of";
+    import is_grouped from "../../mixins/props/is_grouped.js";
+    import is_percented from "../../mixins/props/is_percented.js";
+    import tree_width from "../../mixins/props/tree_width.js";
+    import subtree_is_enabled from "../../mixins/computed/subtree_is_enabled.js";
+    import percenting_is_enabled from "../../mixins/computed/percenting_is_enabled.js";
+    import grouping_is_enabled from "../../mixins/computed/grouping_is_enabled.js";
+    import percentage_of from "../../mixins/props/percentage_of.js";
     import prepareUrl from '../../mixins/methods/PrepareUrl.js';
-    import children_term from "../../mixins/props/children_term";
-    import subtree_term from "../../mixins/props/subtree_term";
+    import children_term from "../../mixins/props/children_term.js";
+    import subtree_term from "../../mixins/props/subtree_term.js";
     
     export default {
         name: 'tree-row',

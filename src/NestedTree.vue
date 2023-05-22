@@ -179,21 +179,21 @@
     import TreeRow from './components/TreeRow/TreeRow.vue';
     import {isNotBlank} from './mixins/FoxValidators.js';
     import ToggleButton from './components/ToggleButton/ToggleButton.vue';
-    import SubtreeRow from './components/SubtreeRow/SubtreeRow';
-    import NodeProcessing from "./mixins/methods/NodeProcessing";
+    import SubtreeRow from './components/SubtreeRow/SubtreeRow.vue';
+    import NodeProcessing from "./mixins/methods/NodeProcessing.js";
     import columns from "./mixins/props/columns.js";
     import groups from "./mixins/props/groups.js";
-    import traverse_down_url from "./mixins/props/traverse_down_url";
-    import subtree_url from "./mixins/props/subtree_url";
-    import grouping_is_enabled from "./mixins/computed/grouping_is_enabled";
-    import subtree_is_enabled from "./mixins/computed/subtree_is_enabled";
-    import percenting_is_enabled from "./mixins/computed/percenting_is_enabled";
-    import percentage_of from './mixins/props/percentage_of';
-    import LookupItem from "./components/LookupItem/LookupItem";
+    import traverse_down_url from "./mixins/props/traverse_down_url.js";
+    import subtree_url from "./mixins/props/subtree_url.js";
+    import grouping_is_enabled from "./mixins/computed/grouping_is_enabled.js";
+    import subtree_is_enabled from "./mixins/computed/subtree_is_enabled.js";
+    import percenting_is_enabled from "./mixins/computed/percenting_is_enabled.js";
+    import percentage_of from './mixins/props/percentage_of.js';
+    import LookupItem from "./components/LookupItem/LookupItem.vue";
     import prepareUrl from './mixins/methods/PrepareUrl.js';
     import CsvProcessing from './mixins/methods/CsvProcessing.js';
-    import children_term from "./mixins/props/children_term";
-    import subtree_term from "./mixins/props/subtree_term";
+    import children_term from "./mixins/props/children_term.js";
+    import subtree_term from "./mixins/props/subtree_term.js";
     import csv_filename from './mixins/props/csv_filename.js';
 
     export default {

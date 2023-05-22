@@ -111,7 +111,7 @@
 </template>
 
 <script>
-    import {greaterThanOrEqual, isNotBlank} from '../../mixins/FoxValidators';
+    import {greaterThanOrEqual, isNotBlank} from '../../mixins/FoxValidators.js';
     import axios from 'axios';
     import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 
