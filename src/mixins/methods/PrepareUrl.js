@@ -4,7 +4,10 @@ export default {
         {
             let preparedUrl = sourceUrl.replace('%id', nodeId);
             
-            if (filterId !== null) {
+            if (
+                filterId !== null
+                && filterId !== ''
+            ) {
                 preparedUrl = preparedUrl.replace('%filter', filterId);
             } else {
                 preparedUrl = preparedUrl.replace('/%filter', '');
